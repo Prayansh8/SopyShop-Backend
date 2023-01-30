@@ -38,7 +38,6 @@ const signUp = async (req, res) => {
   }
 
   const passHash = await bcrypt.hash(password, 10);
-  console.log(passHash);
 
   const userData = {
     name,
