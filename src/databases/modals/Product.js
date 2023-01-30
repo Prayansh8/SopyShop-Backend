@@ -54,6 +54,11 @@ const productSchema = new Schema({
       },
     },
   ],
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "user",
+    required: true,
+  },
   createdAt: { type: Date, default: moment.utc().toISOString() },
   updatedAt: { type: Date, default: moment.utc().toISOString() },
 });

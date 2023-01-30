@@ -4,6 +4,7 @@ const catchAsyncErrors = require("../middlewere/catchAsyncErrors");
 
 // create product
 const createProduct = catchAsyncErrors(async (req, res, next) => {
+  req.body.user = req.user.user._id;
   const product = await db.product.create(req.body);
   return res.status(200).send({ success: true, product });
 });
@@ -24,7 +25,7 @@ const getProduct = catchAsyncErrors(async (req, res, next) => {
 // get all products
 const getAllProducts = catchAsyncErrors(async (req, res) => {
   const resultPerPage = 5;
-  const productCount = await db.product.countDocuments()
+  const productCount = await db.product.countDocuments();
   const apiFeture = new ApiFetures(db.product.find(), req.query)
     .search()
     .filter()

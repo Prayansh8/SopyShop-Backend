@@ -1,6 +1,6 @@
 const express = require("express");
 const { signUp, signIn } = require("./controllers/user");
-const { getUsers, getUser } = require("./controllers/auth");
+const { getUsers, getUser, logoutUser } = require("./controllers/userAuth");
 const {
   getAllProducts,
   createProduct,
@@ -9,6 +9,8 @@ const {
   getProduct,
 } = require("./controllers/product");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const { isAuthenticatedUser, autherizeRoles } = require("./middlewere/auth");
 
 // middlewere for error
 
@@ -19,21 +21,31 @@ const { config } = require("./config");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-const authRouter = express.Router();
-authRouter.post("/new", signUp);
-authRouter.post("/get-token", signIn);
-authRouter.get("/users", getUsers);
-authRouter.get("/user/:id", getUser);
+const userRouter = express.Router();
+userRouter.post("/new", signUp);
+userRouter.post("/get-token", signIn);
+
+const userAuthRouter = express.Router();
+userAuthRouter.get("/logout", logoutUser);
+userAuthRouter.get("/users", getUsers);
+userAuthRouter.get("/user/:id", getUser);
 
 const productRouter = express.Router();
-productRouter.post("/product/new", createProduct);
+productRouter.post(
+  "/product/new",
+  isAuthenticatedUser,
+  autherizeRoles("admin"),
+  createProduct
+);
 productRouter.get("/product/:id", getProduct);
-productRouter.get("/products", getAllProducts);
-productRouter.put("/product/update/:id", updateProduct);
-productRouter.delete("/product/delete/:id", deleteProduct);
+productRouter.get("/products", isAuthenticatedUser, getAllProducts);
+productRouter.put("/product/update/:id", isAuthenticatedUser, autherizeRoles("admin"), updateProduct);
+productRouter.delete("/product/delete/:id", isAuthenticatedUser, autherizeRoles("admin"), deleteProduct);
 
-app.use("/api/v1", authRouter);
+app.use("/api/v1", userRouter);
+app.use("/api/v1", userAuthRouter);
 app.use("/api/v1", productRouter);
 
 app.listen(config.port, () =>
