@@ -1,0 +1,19 @@
+{
+  "name": "sopyshop-backend",
+  "version": "1.0.0",
+  "description": "is a sopy shop backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prayansh8/sopyshop-backend.git"
+  },
+  "author": "prayansh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Prayansh8/sopyshop-backend/issues"
+  },
+  "homepage": "https://github.com/Prayansh8/sopyshop-backend#readme"
+}

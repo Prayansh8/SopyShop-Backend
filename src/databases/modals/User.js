@@ -1,0 +1,50 @@
+const mongoose = require("mongoose");
+const moment = require("moment");
+const validator = require("validator");
+
+const { Schema } = mongoose;
+
+const UserSchema = new Schema({
+  name: {
+    type: String,
+    required: [true, "Plese Enter Your Name"],
+    minLength: [4, "Name should have then 4 characters"],
+    maxLength: [30, "Name cannot extract 30 characters"],
+  },
+  username: {
+    type: String,
+    required: [true, "Plese Enter Your userName"],
+    minLength: [4, "Name should have then 4 characters"],
+    maxLength: [30, "Name cannot extract 30 characters"],
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: [true, "Plese Enter Your Email"],
+    unique: true,
+    validate: [validator.isEmail, "Please Enter a valid Email"],
+  },
+  password: {
+    type: String,
+    required: [true, "Plese Enter Your Password"],
+    minLength: [8, "Name should have then 8 characters"],
+    maxLength: [100, "Name cannot extract 100 characters"],
+  },
+  avatar: [
+    {
+      public_id: { type: String, require: true },
+      url: { type: String, require: true },
+    },
+  ],
+  role: {
+    type: String,
+    default: "user",
+  },
+  resetPasswordToken: String,
+  resetPasswordExplre: Date,
+  createdAt: { type: Date, default: moment.utc().toISOString() },
+  updatedAt: { type: Date, default: moment.utc().toISOString() },
+});
+
+const User = mongoose.model("User", UserSchema);
+module.exports = User;
