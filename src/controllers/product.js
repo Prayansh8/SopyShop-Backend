@@ -1,4 +1,4 @@
-const ApiFetures = require("../../utills/apifeture");
+const ApiFetures = require("../utills/apifeture");
 const { db } = require("../databases/index");
 const catchAsyncErrors = require("../middlewere/catchAsyncErrors");
 
