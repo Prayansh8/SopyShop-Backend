@@ -1,5 +1,6 @@
 const { db } = require("../databases/index");
 const catchAsyncErrors = require("../middlewere/catchAsyncErrors");
+const { sendMailler } = require("../utills/sendMailler");
 
 const getUsers = async (req, res) => {
   const data = await db.user.find({}, { name: 1, userName: 1, email: 1 });
@@ -47,10 +48,48 @@ const logoutUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).send({ success: true, massage: "Logged Out User" });
 });
 
+const forwordPassword = catchAsyncErrors(async (req, res, next) => {
+  const findUser = await db.user.findOne({ email: req.body.email });
+  if (!findUser) {
+    return next(res.status(404).send("user not found"));
+  }
+
+  // get Reset Password Token
+
+  const resetToken = findUser.getResetPasswordToken();
+
+    await findUser.save({validateBeforeSave: false })
+
+    //Create reset password url
+    const resetUrl =`http://localhost:5000/api/v1/reset/password/${resetToken}`;
+    
+    const message = `Your password reset token is as follows:\n\n${resetUrl}\n\n If you have not requested this email, then please ignore.`
+
+
+  try {
+    await sendMailler({
+      email: findUser.email,
+      subject: "Ecommerce Password Recovery",
+      message,
+    });
+    return res.status(200).send({
+      success: true,
+      massage: `Email sent to ${findUser.email}} successfully`,
+    });
+  } catch (error) {
+    findUser.resetPasswordToken = undefined;
+    findUser.resetPasswordExplre = undefined;
+
+    await findUser.save({ validateBeforeSave: false });
+    return next(res.status(500).send("email not send " + error.massage + error));
+  }
+});
+
 module.exports = {
   getUser,
   getUsers,
   updateUser,
   deleteUser,
   logoutUser,
+  forwordPassword,
 };
