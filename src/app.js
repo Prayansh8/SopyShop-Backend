@@ -5,6 +5,7 @@ const {
   getUser,
   logoutUser,
   forwordPassword,
+  resetPassword,
 } = require("./controllers/userAuth");
 const {
   getAllProducts,
@@ -37,6 +38,7 @@ userAuthRouter.get("/logout", logoutUser);
 userAuthRouter.get("/users", getUsers);
 userAuthRouter.get("/user/:id", getUser);
 userAuthRouter.post("/reset/password", forwordPassword);
+userAuthRouter.put("/reset/password/:token", resetPassword);
 
 const productRouter = express.Router();
 productRouter.post(
