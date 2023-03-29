@@ -2,6 +2,11 @@ const { db } = require("../databases/index");
 const catchAsyncErrors = require("../middlewere/catchAsyncErrors");
 const { sendMailler } = require("../utills/sendMailler");
 const crypto = require("crypto");
+const { errorHandeler } = require("../middlewere/errorHandeler");
+const bcrypt = require("bcrypt");
+const { config } = require("../config");
+const jwt = require("jsonwebtoken");
+
 const getUsers = async (req, res) => {
   const data = await db.user.find({}, { name: 1, userName: 1, email: 1 });
   return res.send(data);
@@ -109,13 +114,63 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
     return next(res.status(404).send("Password dose not match"));
   }
 
-  user.password = req.body.password;
+  const password = req.body.password;
+  const passHash = await bcrypt.hash(password, 10);
+
+  user.password = passHash;
   user.resetPasswordToken = undefined;
   user.resetPasswordExplre = undefined;
 
   await user.save();
   return next(res.status(200).send(res + user));
 });
+
+const updatePassword = catchAsyncErrors(async (req, res, next) => {
+  let oldPassword = req.body.oldPassword;
+  let userId = req.user.user._id;
+
+  const user = await db.user.findById(userId).select("+password");
+  if (!user) {
+    return res.status(404).send({ detail: "User not found" });
+  }
+
+  const validPassword = await bcrypt.compare(oldPassword, user.password);
+  if (!validPassword) {
+    return res.status(400).send({ detail: "Invalid credentials" });
+  }
+
+  if (req.body.newPassword !== req.body.comfirmPassword) {
+    return res.status(404).send("Password dose not match");
+  }
+
+  user.password = req.body.newPassword;
+
+  var token = jwt.sign(user, config.jwt.jwtSecretKey);
+  await user.save();
+  return res.status(200).cookie("token", token).send({
+    detail: "User Password Updated",
+    token: token,
+    user: user,
+  });
+});
+
+const updateUserRole = async (req, res, next) => {
+  const email = req.body.email;
+  const newRole = req.body.role;
+
+  const user = await db.user.findOneAndUpdate(
+    { email: email },
+    { role: newRole }
+  );
+  if (!user) {
+    return res.status(404).send({ detail: "User not found" });
+  }
+
+  return res.status(200).send({
+    detail: "User role update succesfull ",
+    success: true,
+  });
+};
 
 module.exports = {
   getUser,
@@ -125,4 +180,6 @@ module.exports = {
   logoutUser,
   forwordPassword,
   resetPassword,
+  updatePassword,
+  updateUserRole,
 };
