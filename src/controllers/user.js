@@ -23,11 +23,11 @@ const signUp = async (req, res, next) => {
   }
 
   var re =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,32}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,32}$/;
   if (!re.test(password)) {
     return res.status(400).send({
       detail:
-        "password should Minimum 6 and maximum 32 characters, at least one uppercase letter, one lowercase letter, one number and one special character: are required",
+        "password should Minimum 4 and maximum 32 characters, at least one uppercase letter, one lowercase letter, one number and one special character: are required",
     });
   }
 

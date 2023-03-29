@@ -6,6 +6,9 @@ const {
   logoutUser,
   forwordPassword,
   resetPassword,
+  updatePassword,
+  updateUserRole,
+  deleteUser,
 } = require("./controllers/userAuth");
 const {
   getAllProducts,
@@ -34,11 +37,24 @@ userRouter.post("/new", signUp);
 userRouter.post("/get-token", signIn);
 
 const userAuthRouter = express.Router();
-userAuthRouter.get("/logout", logoutUser);
+userAuthRouter.get("/logout", isAuthenticatedUser, logoutUser);
 userAuthRouter.get("/users", getUsers);
-userAuthRouter.get("/user/:id", getUser);
-userAuthRouter.post("/reset/password", forwordPassword);
+userAuthRouter.get("/user/:id", isAuthenticatedUser, getUser);
+userAuthRouter.post("/reset/password", isAuthenticatedUser, forwordPassword);
 userAuthRouter.put("/reset/password/:token", resetPassword);
+userAuthRouter.put("/password/update", isAuthenticatedUser, updatePassword);
+userAuthRouter.put(
+  "/admin/update",
+  isAuthenticatedUser,
+  autherizeRoles("admin"),
+  updateUserRole
+);
+userAuthRouter.delete(
+  "/admin/delete-user",
+  isAuthenticatedUser,
+  autherizeRoles("admin"),
+  deleteUser
+);
 
 const productRouter = express.Router();
 productRouter.post(

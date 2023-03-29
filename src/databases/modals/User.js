@@ -27,8 +27,8 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: [true, "Plese Enter Your Password"],
-    minLength: [8, "Name should have then 8 characters"],
-    maxLength: [100, "Name cannot extract 100 characters"],
+    minLength: [4, "password should have then 4 characters"],
+    maxLength: [100, "password cannot extract 100 characters"],
   },
   avatar: [
     {
