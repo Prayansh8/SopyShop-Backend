@@ -8,7 +8,10 @@ const { config } = require("../config");
 const jwt = require("jsonwebtoken");
 
 const getUsers = async (req, res) => {
-  const data = await db.user.find({}, { name: 1, userName: 1, email: 1 });
+  const data = await db.user.find(
+    {},
+    { name: 1, userName: 1, email: 1, role: 1 , createdAt: 1, createdAt:1, avatar:1}
+  );
   return res.send(data);
 };
 

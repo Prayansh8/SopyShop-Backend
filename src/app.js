@@ -16,6 +16,9 @@ const {
   updateProduct,
   deleteProduct,
   getProduct,
+  createProductReviwe,
+  getAllProductsReviews,
+  deleteReviewes,
 } = require("./controllers/product");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -38,10 +41,14 @@ userRouter.post("/get-token", signIn);
 
 const userAuthRouter = express.Router();
 userAuthRouter.get("/logout", isAuthenticatedUser, logoutUser);
-userAuthRouter.get("/users", getUsers);
+userAuthRouter.get("/users", isAuthenticatedUser, getUsers);
 userAuthRouter.get("/user/:id", isAuthenticatedUser, getUser);
 userAuthRouter.post("/reset/password", isAuthenticatedUser, forwordPassword);
-userAuthRouter.put("/reset/password/:token", resetPassword);
+userAuthRouter.put(
+  "/reset/password/:token",
+  isAuthenticatedUser,
+  resetPassword
+);
 userAuthRouter.put("/password/update", isAuthenticatedUser, updatePassword);
 userAuthRouter.put(
   "/admin/update",
@@ -76,6 +83,13 @@ productRouter.delete(
   isAuthenticatedUser,
   autherizeRoles("admin"),
   deleteProduct
+);
+productRouter.put("/product/review", isAuthenticatedUser, createProductReviwe);
+productRouter.get("/product/reviews", getAllProductsReviews);
+productRouter.get(
+  "/product/delete/reviews",
+  isAuthenticatedUser,
+  deleteReviewes
 );
 
 app.use("/api/v1", userRouter);
