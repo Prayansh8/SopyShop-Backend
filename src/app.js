@@ -20,12 +20,20 @@ const {
   getAllProductsReviews,
   deleteReviewes,
 } = require("./controllers/product");
-const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { isAuthenticatedUser, autherizeRoles } = require("./middlewere/auth");
+const {
+  newOrder,
+  myOrders,
+  getSingleOrder,
+  getAllOrders,
+  updateOrder,
+  deleteOrder,
+} = require("./controllers/order");
 
 // middlewere for error
 
+const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 const { config } = require("./config");
@@ -85,16 +93,41 @@ productRouter.delete(
   deleteProduct
 );
 productRouter.put("/product/review", isAuthenticatedUser, createProductReviwe);
-productRouter.get("/product/reviews", getAllProductsReviews);
-productRouter.get(
-  "/product/delete/reviews",
+productRouter.get("/reviews", getAllProductsReviews);
+productRouter.delete("/delete/review", isAuthenticatedUser, deleteReviewes);
+
+const orderRouter = express.Router();
+orderRouter.post("/order/new", isAuthenticatedUser, newOrder);
+orderRouter.get(
+  "/order/:id",
   isAuthenticatedUser,
-  deleteReviewes
+  autherizeRoles("admin"),
+  getSingleOrder
+);
+orderRouter.get("/my-orders", isAuthenticatedUser, myOrders);
+orderRouter.get(
+  "/admin/orders",
+  isAuthenticatedUser,
+  autherizeRoles("admin"),
+  getAllOrders
+);
+orderRouter.put(
+  "/admin/order/:id",
+  isAuthenticatedUser,
+  autherizeRoles("admin"),
+  updateOrder
+);
+orderRouter.delete(
+  "/admin/order/:id",
+  isAuthenticatedUser,
+  autherizeRoles("admin"),
+  deleteOrder
 );
 
 app.use("/api/v1", userRouter);
 app.use("/api/v1", userAuthRouter);
 app.use("/api/v1", productRouter);
+app.use("/api/v1", orderRouter);
 
 app.listen(config.port, () =>
   console.log(`Example app listening on port ${config.baseUrl}:${config.port}`)
