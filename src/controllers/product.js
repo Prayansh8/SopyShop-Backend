@@ -16,7 +16,7 @@ const getProduct = catchAsyncErrors(async (req, res, next) => {
   if (!product) {
     return res
       .status(500)
-      .send({ success: true, massage: "Product not found" });
+      .send({ success: false, massage: "Product not found" });
   }
 
   return res.status(200).send({ success: true, product });
@@ -107,7 +107,7 @@ const createProductReviwe = async (req, res, next) => {
 };
 
 const getAllProductsReviews = async (req, res, next) => {
-  const product = await db.product.findById(req.query.productId);
+  const product = await db.product.findById(req.query.id);
 
   if (!product) {
     return res.status(400).send({ massage: "Product not found" });

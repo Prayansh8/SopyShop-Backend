@@ -45,7 +45,7 @@ const productSchema = new Schema({
     {
       user: {
         type: mongoose.Schema.ObjectId,
-        ref: "user",
+        ref: "User",
         required: true,
       },
       name: {
@@ -61,7 +61,7 @@ const productSchema = new Schema({
   ],
   user: {
     type: mongoose.Schema.ObjectId,
-    ref: "user",
+    ref: "User",
     required: true,
   },
   createdAt: { type: Date, default: moment.utc().toISOString() },

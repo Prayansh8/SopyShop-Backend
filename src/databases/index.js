@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const User = require("./modals/User");
 const Product = require("./modals/Product");
+const Order = require("./modals/Order");
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ connect();
 const db = {
   user: User,
   product: Product,
+  order: Order,
 };
 
 module.exports = { connect, db };
