@@ -32,13 +32,18 @@ const UserSchema = new Schema({
   },
   avatar: [
     {
-      public_id: { type: String, require: true },
-      url: { type: String, require: true },
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
     },
   ],
   role: {
     type: String,
-    enum: ['user', 'admin'],
     default: "user",
   },
   resetPasswordToken: { type: String },
@@ -49,18 +54,21 @@ const UserSchema = new Schema({
 
 // genrating password forward method
 
-UserSchema.methods.getResetPasswordToken = function(){
+UserSchema.methods.getResetPasswordToken = function () {
   //Generate token
-  const resetToken = crypto.randomBytes(20).toString('hex');
+  const resetToken = crypto.randomBytes(20).toString("hex");
 
   //Hash and set to resetPasswordToken
-  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
 
   //Set token expire time
-  this.resetpasswordExpire = Date.now() + 30 * 60 * 1000
+  this.resetpasswordExpire = Date.now() + 30 * 60 * 1000;
 
-  return resetToken
-}
+  return resetToken;
+};
 
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

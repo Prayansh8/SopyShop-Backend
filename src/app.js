@@ -58,7 +58,7 @@ userAuthRouter.put(
   resetPassword
 );
 userAuthRouter.put("/password/update", isAuthenticatedUser, updatePassword);
-userAuthRouter.put(
+userAuthRouter.patch(
   "/admin/update",
   isAuthenticatedUser,
   autherizeRoles("admin"),
@@ -79,8 +79,8 @@ productRouter.post(
   createProduct
 );
 productRouter.get("/product/:id", getProduct);
-productRouter.get("/products", isAuthenticatedUser, getAllProducts);
-productRouter.put(
+productRouter.get("/products", getAllProducts);
+productRouter.patch(
   "/product/update/:id",
   isAuthenticatedUser,
   autherizeRoles("admin"),

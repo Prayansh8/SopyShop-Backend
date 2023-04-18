@@ -1,4 +1,4 @@
-const ApiFetures = require("../utills/apifeture");
+const ApiFeatures = require("../utills/ApiFeatures");
 const { db } = require("../databases/index");
 const catchAsyncErrors = require("../middlewere/catchAsyncErrors");
 
@@ -24,31 +24,50 @@ const getProduct = catchAsyncErrors(async (req, res, next) => {
 
 // get all products
 const getAllProducts = catchAsyncErrors(async (req, res) => {
-  const resultPerPage = 5;
-  const productCount = await db.product.countDocuments();
-  const apiFeture = new ApiFetures(db.product.find(), req.query)
-    .search()
-    .filter()
-    .pagination(resultPerPage);
+  try {
+    const resultPerPage = 8;
+    const productsCount = await db.product.countDocuments();
+    const features = new ApiFeatures(db.product.find(), req.query)
+      .filter()
+      .search()
+      .category()
+      .price()
+      .paginate(resultPerPage);
 
-  const product = await apiFeture.query;
-  return res.status(200).send({ success: true, product, productCount });
+    const products = await features.query;
+    res.status(200).json({
+      success: true,
+      products,
+      productsCount,
+      resultPerPage,
+      results: products.length,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to retrieve products" });
+  }
 });
 
 // update product
 const updateProduct = catchAsyncErrors(async (req, res, next) => {
-  const productId = req.params._id;
+  const productId = req.params.id;
   const productData = req.body;
+
   let product = null;
   try {
-    product = await db.product.findById(productId);
+    product = await db.product.findByIdAndUpdate(
+      productId,
+      productData,
+      { new: true },
+      (err) => {
+        if (err) throw err;
+        console.log(err);
+      }
+    );
+    const productDetails = await db.product.findById(productId);
+    return res.status(200).send({ success: true, productDetails });
   } catch (error) {
-    console.error(`Failed to get post, error: ${error.message}`);
+    return res.status(400).send({ success: false, productData, productId });
   }
-
-  await db.product.updateOne(product, productData);
-  product = await db.product.findById(productId);
-  return res.send({ success: true, product });
 });
 
 // Delete Product
