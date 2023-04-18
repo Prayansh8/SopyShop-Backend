@@ -14,7 +14,7 @@ const productSchema = new Schema({
     maxLength: [8, "Price cannot exceed 8 characters"],
     required: [true, "Please Enter the Preoduct Price"],
   },
-  ratings: { type: Number, default: 0 },
+  ratings: { type: Number, default: 0, min: 0, max: 5 },
   images: [
     {
       public_id: {
@@ -52,7 +52,7 @@ const productSchema = new Schema({
         type: String,
       },
       rating: {
-        type: String,
+        type: Number,
       },
       comment: {
         type: String,
