@@ -183,6 +183,22 @@ const updateUserRole = async (req, res, next) => {
   });
 };
 
+const getUserDetails = async (req, res, next) => {
+  try {
+    let userId = req.user.user._id;
+    const user = await db.user.findById(userId);
+    return res.status(200).send({
+      success: true,
+      user: user,
+    });
+  } catch (error) {
+    return res.status(400).send({
+      success: false,
+      detail: "user not found"
+    });
+  }
+};
+
 module.exports = {
   getUser,
   getUsers,
@@ -193,4 +209,5 @@ module.exports = {
   resetPassword,
   updatePassword,
   updateUserRole,
+  getUserDetails,
 };

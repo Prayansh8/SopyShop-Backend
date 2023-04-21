@@ -11,7 +11,7 @@ const UserSchema = new Schema({
     minLength: [4, "Name should have then 4 characters"],
     maxLength: [30, "Name cannot extract 30 characters"],
   },
-  username: {
+  userName: {
     type: String,
     required: [true, "Plese Enter Your userName"],
     minLength: [4, "Name should have then 4 characters"],

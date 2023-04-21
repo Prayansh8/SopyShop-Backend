@@ -14,6 +14,10 @@ const config = {
     passwordMail: process.env.SMPT_PASSWORD || "pawbwbmawdkubqqh",
     serviceMail: process.env.SMPT_SERVICE || "gmail",
   },
+  cloudinaryName: process.env.CLOUDINARY_CLOUD_NAME || "df0eod1yt",
+  cloudinaryKey: process.env.CLOUDINARY_API_KEY || "118137594588245",
+  cloudinarySecret:
+    process.env.CLOUDINARY_API_SECRET || "tGnNgJIBy-AB_avRoOY1tAY5E5o",
 };
 
 module.exports = { config };

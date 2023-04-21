@@ -1,8 +1,11 @@
 const express = require("express");
+const cloudinary = require("cloudinary");
 const { signUp, signIn } = require("./controllers/user");
+const bodyParser = require("body-parser");
 const {
   getUsers,
   getUser,
+  getUserDetails,
   logoutUser,
   forwordPassword,
   resetPassword,
@@ -37,17 +40,27 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 const { config } = require("./config");
+const fileUpload = require("express-fileupload");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload());
+
+cloudinary.config({
+  cloud_name: config.cloudinaryName,
+  api_key: config.cloudinaryKey,
+  api_secret: config.cloudinarySecret,
+});
 
 const userRouter = express.Router();
-userRouter.post("/new", signUp);
+userRouter.post("/register", signUp);
 userRouter.post("/get-token", signIn);
 
 const userAuthRouter = express.Router();
+userAuthRouter.get("/me", isAuthenticatedUser, getUserDetails);
 userAuthRouter.get("/logout", isAuthenticatedUser, logoutUser);
 userAuthRouter.get("/users", isAuthenticatedUser, getUsers);
 userAuthRouter.get("/user/:id", isAuthenticatedUser, getUser);
