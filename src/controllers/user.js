@@ -2,15 +2,27 @@ const { db } = require("../databases/index");
 const jwt = require("jsonwebtoken");
 const { config } = require("../config");
 const bcrypt = require("bcrypt");
+const cloudinary = require("cloudinary");
 
 const signUp = async (req, res, next) => {
-  const { name, username, email, password, avatar } = req.body;
+  const myCloud = cloudinary.v2.uploader.upload(req.body.avatar, {
+    folder: "avatars",
+    width: 150,
+    height: 100,
+    crop: "scale",
+  });
+
+  if (!myCloud) {
+    return res.status(400).send({ detail: "avatar is not found" });
+  }
+
+  const { name, userName, email, password } = req.body;
 
   if (name === "") {
     return res.status(400).send({ detail: "first_name are required" });
   }
 
-  if (username === "") {
+  if (userName === "") {
     return res.status(400).send({ detail: "last_name are required" });
   }
 
@@ -41,10 +53,13 @@ const signUp = async (req, res, next) => {
 
   const userData = {
     name,
-    username,
+    userName,
     email,
     password: passHash,
-    avatar,
+    avatar: {
+      public_id: (await myCloud).public_id,
+      url: (await myCloud).secure_url,
+    },
   };
 
   try {
@@ -52,31 +67,33 @@ const signUp = async (req, res, next) => {
     user.save();
     return res.status(201).send(user);
   } catch (error) {
-    res.send("user not found!");
+    res.send({ success: true, detail: "user not found!" });
   }
 };
 
 const signIn = async (req, res) => {
   try {
-    const email = req.body.email;
-    const password = req.body.password;
-    // var ere =
-    //   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    // if (!ere.test(email)) {
-    //   return res.status(400).send({ detail: "Please fill email formate" });
-    // }
+    const userEmail = req.body.email;
 
-    // var re =
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,32}$/;
-    // if (!re.test(password)) {
-    //   return res.status(400).send({
-    //     detail:
-    //       "Minimum 6 and maximum 32 characters, at least one uppercase letter, one lowercase letter, one number and one special character:",
-    //   });
-    // }
+    const email = userEmail.toLowerCase();
+    const password = req.body.password;
+
+    var ere =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (!ere.test(email)) {
+      return res.status(400).send({ detail: "Please fill email formate" });
+    }
+
+    var re =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,32}$/;
+    if (!re.test(password)) {
+      return res.status(400).send({
+        detail:
+          "Minimum 6 and maximum 32 characters, at least one uppercase letter, one lowercase letter, one number and one special character:",
+      });
+    }
 
     const user = await db.user.findOne({ email: email });
-    console.log(user)
     if (!user) {
       return res.status(404).send({ detail: "User not found email" });
     }
@@ -97,7 +114,7 @@ const signIn = async (req, res) => {
     return res
       .status(200)
       .cookie("token", token, option)
-      .send({ detail: "Login success", token: token, userData: userData });
+      .send({ detail: "Login success", token: token, user});
   } catch (error) {
     return res.status(400).send({ detail: "Login unsuccessful" });
   }
