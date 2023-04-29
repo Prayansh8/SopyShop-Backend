@@ -26,7 +26,6 @@ const newOrder = async (req, res, next) => {
 };
 
 const getSingleOrder = async (req, res, next) => {
-  console.log(req.params.id);
   try {
     const order = await db.order
       .findById(req.params.id)

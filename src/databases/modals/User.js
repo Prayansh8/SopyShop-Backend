@@ -11,13 +11,6 @@ const UserSchema = new Schema({
     minLength: [4, "Name should have then 4 characters"],
     maxLength: [30, "Name cannot extract 30 characters"],
   },
-  userName: {
-    type: String,
-    required: [true, "Plese Enter Your userName"],
-    minLength: [4, "Name should have then 4 characters"],
-    maxLength: [30, "Name cannot extract 30 characters"],
-    unique: true,
-  },
   email: {
     type: String,
     required: [true, "Plese Enter Your Email"],
@@ -30,18 +23,10 @@ const UserSchema = new Schema({
     minLength: [4, "password should have then 4 characters"],
     maxLength: [100, "password cannot extract 100 characters"],
   },
-  avatar: [
-    {
-      public_id: {
-        type: String,
-        required: true,
-      },
-      url: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
+  avatar: {
+    type: String,
+    required: true,
+  },
   role: {
     type: String,
     default: "user",

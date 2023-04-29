@@ -18,6 +18,15 @@ const config = {
   cloudinaryKey: process.env.CLOUDINARY_API_KEY || "118137594588245",
   cloudinarySecret:
     process.env.CLOUDINARY_API_SECRET || "tGnNgJIBy-AB_avRoOY1tAY5E5o",
+
+  aws: {
+    awsBucketName: process.env.AWS_BUCKET_NAME || "sopyshop-user-profile",
+    awsAccessKey: process.env.AWS_ACCESS_KEY_ID || "AKIAXWQY27CBH7FF7N55",
+    awsSecretKey:
+      process.env.AWS_SECRET_ACCESS_KEY ||
+      "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",
+    awsReasion: process.env.AWS_REASION || "ap-south-1",
+  },
 };
 
 module.exports = { config };
