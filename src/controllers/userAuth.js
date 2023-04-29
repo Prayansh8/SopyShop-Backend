@@ -12,7 +12,6 @@ const getUsers = async (req, res) => {
     {},
     {
       name: 1,
-      userName: 1,
       email: 1,
       role: 1,
       createdAt: 1,
@@ -27,7 +26,6 @@ const getUser = async (req, res) => {
   const userId = req.params._id;
   const data = await db.user.findOne(userId, {
     name: 1,
-    userName: 1,
     email: 1,
   });
   return res.send(data);
@@ -40,7 +38,7 @@ const updateUser = async (req, res) => {
   }
   const data = await db.user.findByIdAndUpdate(
     { userId },
-    { name: 1, userName: 1, email: 1 }
+    { name: 1, email: 1 }
   );
   return res.send(data);
 };
@@ -194,7 +192,7 @@ const getUserDetails = async (req, res, next) => {
   } catch (error) {
     return res.status(400).send({
       success: false,
-      detail: "user not found"
+      detail: "user not found",
     });
   }
 };

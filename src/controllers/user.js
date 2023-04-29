@@ -2,28 +2,13 @@ const { db } = require("../databases/index");
 const jwt = require("jsonwebtoken");
 const { config } = require("../config");
 const bcrypt = require("bcrypt");
-const cloudinary = require("cloudinary");
+const { uploadImage } = require("../uploder/upload");
 
 const signUp = async (req, res, next) => {
-  const myCloud = cloudinary.v2.uploader.upload(req.body.avatar, {
-    folder: "avatars",
-    width: 150,
-    height: 100,
-    crop: "scale",
-  });
-
-  if (!myCloud) {
-    return res.status(400).send({ detail: "avatar is not found" });
-  }
-
-  const { name, userName, email, password } = req.body;
+  const { name, email, password } = req.body;
 
   if (name === "") {
     return res.status(400).send({ detail: "first_name are required" });
-  }
-
-  if (userName === "") {
-    return res.status(400).send({ detail: "last_name are required" });
   }
 
   var ere =
@@ -51,23 +36,19 @@ const signUp = async (req, res, next) => {
 
   const passHash = await bcrypt.hash(password, 10);
 
-  const userData = {
+  const user = await db.user({
     name,
-    userName,
     email,
     password: passHash,
-    avatar: {
-      public_id: (await myCloud).public_id,
-      url: (await myCloud).secure_url,
-    },
-  };
-
+    avatar: "",
+  });
   try {
-    const user = await db.user(userData);
-    user.save();
-    return res.status(201).send(user);
-  } catch (error) {
-    res.send({ success: true, detail: "user not found!" });
+    const uploadedImage = await uploadImage(req.file);
+    user.avatar = uploadedImage.Location;
+    const newUser = await user.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -114,7 +95,7 @@ const signIn = async (req, res) => {
     return res
       .status(200)
       .cookie("token", token, option)
-      .send({ detail: "Login success", token: token, user});
+      .send({ detail: "Login success", token: token, user });
   } catch (error) {
     return res.status(400).send({ detail: "Login unsuccessful" });
   }
