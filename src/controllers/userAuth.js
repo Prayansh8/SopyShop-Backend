@@ -2,23 +2,20 @@ const { db } = require("../databases/index");
 const catchAsyncErrors = require("../middlewere/catchAsyncErrors");
 const { sendMailler } = require("../utills/sendMailler");
 const crypto = require("crypto");
-const { errorHandeler } = require("../middlewere/errorHandeler");
 const bcrypt = require("bcrypt");
 const { config } = require("../config");
 const jwt = require("jsonwebtoken");
+const { uploadImage } = require("../uploder/upload");
 
 const getUsers = async (req, res) => {
-  const data = await db.user.find(
-    {},
-    {
-      name: 1,
-      email: 1,
-      role: 1,
-      createdAt: 1,
-      createdAt: 1,
-      avatar: 1,
-    }
-  );
+  const data = await db.user.find({
+    name: 1,
+    email: 1,
+    role: 1,
+    createdAt: 1,
+    createdAt: 1,
+    avatar: 1,
+  });
   return res.send(data);
 };
 
@@ -32,19 +29,33 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const userId = req.params._id;
-  if (req.user._id != userId) {
+  const userId = req.user.user._id;
+
+  if (!userId) {
     return res.send("user are unothorised");
   }
-  const data = await db.user.findByIdAndUpdate(
-    { userId },
-    { name: 1, email: 1 }
-  );
-  return res.send(data);
+
+  const uploadedImage = await uploadImage(req.file);
+  const avatar = uploadedImage.Location;
+
+  const updatedUser = {
+    name: req.body.name,
+    email: req.body.email,
+    avatar: avatar,
+  };
+
+  try {
+    let user = await db.user.findByIdAndUpdate(userId, updatedUser, {
+      new: true,
+    });
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 };
 
 const deleteUser = async (req, res) => {
-  const userId = req.params._id;
+  const userId = req.user.user._id;
   if (req.user._id != userId) {
     return res.send("user are unothorised");
   }
