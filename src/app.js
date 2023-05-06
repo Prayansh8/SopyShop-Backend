@@ -11,6 +11,7 @@ const {
   updatePassword,
   updateUserRole,
   deleteUser,
+  updateAvatar,
 } = require("./controllers/userAuth");
 const {
   getAllProducts,
@@ -52,7 +53,13 @@ userRouter.post("/get-token", signIn);
 
 const userAuthRouter = express.Router();
 userAuthRouter.get("/me", isAuthenticatedUser, getUserDetails);
-userAuthRouter.patch("/me/update",upload.single('avatar'), isAuthenticatedUser, updateUser);
+userAuthRouter.patch("/me/update", isAuthenticatedUser, updateUser);
+userAuthRouter.patch(
+  "/me/update/avatar",
+  upload.single("avatar"),
+  isAuthenticatedUser,
+  updateAvatar
+);
 userAuthRouter.get("/logout", isAuthenticatedUser, logoutUser);
 userAuthRouter.get("/users", isAuthenticatedUser, getUsers);
 userAuthRouter.get("/user/:id", isAuthenticatedUser, getUser);
