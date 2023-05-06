@@ -35,12 +35,34 @@ const updateUser = async (req, res) => {
     return res.send("user are unothorised");
   }
 
-  const uploadedImage = await uploadImage(req.file);
-  const avatar = uploadedImage.Location;
-
   const updatedUser = {
     name: req.body.name,
     email: req.body.email,
+  };
+
+  try {
+    let user = await db.user.findByIdAndUpdate(userId, updatedUser, {
+      new: true,
+    });
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+const updateAvatar = async (req, res) => {
+  const userId = req.user.user._id;
+
+  if (!userId) {
+    return res.status(401).send("user are unothorised");
+  }
+  const uploadedImage = await uploadImage(req.file);
+  if (!uploadedImage) {
+    return res.status(201).send("uploadedImage are not found");
+  }
+  const avatar = uploadedImage.Location;
+
+  const updatedUser = {
     avatar: avatar,
   };
 
@@ -219,4 +241,5 @@ module.exports = {
   updatePassword,
   updateUserRole,
   getUserDetails,
+  updateAvatar,
 };
