@@ -29,18 +29,17 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const userId = req.user.user._id;
-
-  if (!userId) {
-    return res.send("user are unothorised");
-  }
-
-  const updatedUser = {
-    name: req.body.name,
-    email: req.body.email,
-  };
-
   try {
+    let userId = req.user.user._id;
+    if (!userId) {
+      return res.send("user are unothorised");
+    }
+
+    const updatedUser = {
+      name: req.body.name,
+      email: req.body.email,
+    };
+
     let user = await db.user.findByIdAndUpdate(userId, updatedUser, {
       new: true,
     });
@@ -87,10 +86,6 @@ const deleteUser = async (req, res) => {
 
 // logOut user
 const logoutUser = catchAsyncErrors(async (req, res, next) => {
-  // const authHeader = req.headers["authorization"];
-  // authHeader.token = "";
-  // await user.save();
-
   try {
     const user = await db.user.findById(req.user.user._id);
     if (!user) {

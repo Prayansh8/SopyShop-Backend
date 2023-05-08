@@ -7,12 +7,12 @@ const isAuthenticatedUser = async (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
-      return res.sendStatus(401);
+      return res.status(200).json("user auth successfull");
     }
 
     jwt.verify(token, config.jwt.jwtSecretKey, (err, user) => {
       if (err) {
-        return res.sendStatus(403);
+        return res.status(403).send(err);
       }
       req.user = user;
       next();

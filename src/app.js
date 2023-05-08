@@ -56,7 +56,7 @@ userRouter.post("/get-token", signIn);
 const userAuthRouter = express.Router();
 userAuthRouter.get("/me", isAuthenticatedUser, getUserDetails);
 userAuthRouter.patch("/me/update", isAuthenticatedUser, updateUser);
-userAuthRouter.patch(
+userAuthRouter.put(
   "/me/update/avatar",
   upload.single("avatar"),
   isAuthenticatedUser,
