@@ -1,26 +1,35 @@
-const catchAsyncErrors = require("./catchAsyncErrors");
 const jwt = require("jsonwebtoken");
 const { config } = require("../config");
-const { db } = require("../databases/index");
 
-const isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
-  const { token } = req.cookies;
+const isAuthenticatedUser = async (req, res, next) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) {
-    return next(res.status(401).send("Plese signIn to access this resources"));
+    if (!token) {
+      return res.sendStatus(401);
+    }
+
+    jwt.verify(token, config.jwt.jwtSecretKey, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      req.user = user;
+      next();
+    });
+  } catch (error) {
+    return res.status(400).json("Please SignIn!");
   }
-
-  const decodedDate = jwt.verify(token, config.jwt.jwtSecretKey);
-  req.user = decodedDate
-  next();
-});
+};
 
 const autherizeRoles = (...roles) => {
   return (req, res, next) => {
-      if (!roles.includes(req.user.user.role)) {
-       return res.status(403).send(`Role: users is not allowed to access this resource `);
-      }
-      next();
+    if (!roles.includes(req.user.user.role)) {
+      return res
+        .status(403)
+        .send(`Role: users is not allowed to access this resource `);
+    }
+    next();
   };
 };
 

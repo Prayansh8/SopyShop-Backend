@@ -41,11 +41,13 @@ const dotenv = require("dotenv");
 dotenv.config();
 const { config } = require("./config");
 const { upload } = require("./uploder/upload");
+const bodyParser = require("body-parser");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.json());
 
 const userRouter = express.Router();
 userRouter.post("/register", upload.single("avatar"), signUp);
@@ -60,7 +62,7 @@ userAuthRouter.patch(
   isAuthenticatedUser,
   updateAvatar
 );
-userAuthRouter.get("/logout", isAuthenticatedUser, logoutUser);
+userAuthRouter.post("/logout", isAuthenticatedUser, logoutUser);
 userAuthRouter.get("/users", isAuthenticatedUser, getUsers);
 userAuthRouter.get("/user/:id", isAuthenticatedUser, getUser);
 userAuthRouter.post("/reset/password", isAuthenticatedUser, forwordPassword);
