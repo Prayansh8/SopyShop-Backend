@@ -87,12 +87,22 @@ const deleteUser = async (req, res) => {
 
 // logOut user
 const logoutUser = catchAsyncErrors(async (req, res, next) => {
-  res.cookie("token", null, {
-    expires: new Date(Date.now()),
-    httpOnly: true,
-  });
+  // const authHeader = req.headers["authorization"];
+  // authHeader.token = "";
+  // await user.save();
 
-  res.status(200).send({ success: true, massage: "Logged Out User" });
+  try {
+    const user = await db.user.findById(req.user.user._id);
+    if (!user) {
+      return res.status(401).send({ success: true, massage: "User not found" });
+    }
+    user.token = null;
+    await user.save();
+    return res.status(200).send({ success: true, massage: "Logged Out User" });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
 });
 
 const forwordPassword = catchAsyncErrors(async (req, res, next) => {
@@ -223,7 +233,7 @@ const getUserDetails = async (req, res, next) => {
       user: user,
     });
   } catch (error) {
-    return res.status(400).send({
+    return res.status(401).send({
       success: false,
       detail: "user not found",
     });

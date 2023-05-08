@@ -86,16 +86,14 @@ const signIn = async (req, res) => {
     const userData = {
       user,
     };
-    const token = jwt.sign(userData, config.jwt.jwtSecretKey);
 
-    const option = {
-      expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-      httpOnly: true,
-    };
+    const token = jwt.sign(userData, config.jwt.jwtSecretKey, {
+      expiresIn: "4d",
+    });
     return res
       .status(200)
-      .cookie("token", token, option)
-      .send({ detail: "Login success", token: token, user });
+      .header("token", token)
+      .json({ detail: "Login success", token: token, user: userData });
   } catch (error) {
     return res.status(400).send({ detail: "Login unsuccessful" });
   }
