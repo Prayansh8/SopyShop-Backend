@@ -132,9 +132,7 @@ const forwordPassword = catchAsyncErrors(async (req, res, next) => {
     findUser.resetPasswordExplre = undefined;
 
     await findUser.save({ validateBeforeSave: false });
-    return next(
-      res.status(500).send("email not send " + error.massage + error)
-    );
+    return next(res.status(500).send({ message: "email not send ", error }));
   }
 });
 
@@ -151,9 +149,10 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
   if (!user) {
     return next(
-      res
-        .status(404)
-        .send("reset password token is invalid or has been expired" + user)
+      res.status(404).send({
+        message: "reset password token is invalid or has been expired",
+        user,
+      })
     );
   }
 
@@ -178,12 +177,12 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
 
   const user = await db.user.findById(userId).select("+password");
   if (!user) {
-    return res.status(404).send({ detail: "User not found" });
+    return res.status(404).send({ message: "User not found" });
   }
 
   const validPassword = await bcrypt.compare(oldPassword, user.password);
   if (!validPassword) {
-    return res.status(400).send({ detail: "Invalid credentials" });
+    return res.status(400).send({ message: "Invalid credentials" });
   }
 
   if (req.body.newPassword !== req.body.comfirmPassword) {
@@ -195,7 +194,7 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
   var token = jwt.sign(user, config.jwt.jwtSecretKey);
   await user.save();
   return res.status(200).cookie("token", token).send({
-    detail: "User Password Updated",
+    message: "User Password Updated",
     token: token,
     user: user,
   });
@@ -210,11 +209,11 @@ const updateUserRole = async (req, res, next) => {
     { role: newRole }
   );
   if (!user) {
-    return res.status(404).send({ detail: "User not found" });
+    return res.status(404).send({ message: "User not found" });
   }
 
   return res.status(200).send({
-    detail: "User role update succesfull ",
+    message: "User role update succesfull ",
     success: true,
   });
 };
@@ -223,14 +222,15 @@ const getUserDetails = async (req, res, next) => {
   try {
     let userId = req.user.user._id;
     const user = await db.user.findById(userId);
-    return res.status(200).send({
+    return res.status(200).json({
       success: true,
       user: user,
+      message: "user found success",
     });
   } catch (error) {
-    return res.status(401).send({
+    return res.status(401).json({
       success: false,
-      detail: "user not found",
+      message: "user not found",
     });
   }
 };
