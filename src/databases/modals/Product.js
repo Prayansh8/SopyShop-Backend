@@ -17,14 +17,7 @@ const productSchema = new Schema({
   ratings: { type: Number, default: 0, min: 0, max: 5 },
   images: [
     {
-      public_id: {
-        type: String,
-        required: true,
-      },
-      url: {
-        type: String,
-        required: true,
-      },
+      url: String,
     },
   ],
   category: {

@@ -15,6 +15,7 @@ const {
 } = require("./controllers/userAuth");
 const {
   getAllProducts,
+  getAdminProducts,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -88,9 +89,16 @@ userAuthRouter.delete(
 const productRouter = express.Router();
 productRouter.post(
   "/product/new",
+  upload.array("images"),
   isAuthenticatedUser,
   autherizeRoles("admin"),
   createProduct
+);
+productRouter.get(
+  "/admin/products",
+  isAuthenticatedUser,
+  autherizeRoles("admin"),
+  getAdminProducts
 );
 productRouter.get("/product/:id", getProduct);
 productRouter.get("/products", getAllProducts);

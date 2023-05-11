@@ -8,7 +8,14 @@ const s3 = new AWS.S3({
   region: config.aws.awsReasion,
 });
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/gif" ||
+    file.mimetype === "image/webp" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jfif"
+  ) {
     cb(null, true);
   } else {
     cb(new Error("Unsupported file type"), false);
@@ -20,7 +27,7 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 1024 * 1024 * 5, // 5MB
+    fileSize: 1024 * 1024 * 8, // 8MB
   },
   fileFilter: fileFilter,
 });
@@ -35,4 +42,4 @@ const uploadImage = (file) => {
   return s3.upload(params).promise();
 };
 
-module.exports = { upload, uploadImage };
+module.exports = { upload, uploadImage, s3 };

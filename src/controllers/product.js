@@ -1,13 +1,47 @@
 const ApiFeatures = require("../utills/ApiFeatures");
 const { db } = require("../databases/index");
 const catchAsyncErrors = require("../middlewere/catchAsyncErrors");
+const { uploadImage, s3 } = require("../uploder/upload");
+const { config } = require("../config");
 
 // create product
-const createProduct = catchAsyncErrors(async (req, res, next) => {
+const createProduct = async (req, res, next) => {
   req.body.user = req.user.user._id;
-  const product = await db.product.create(req.body);
-  return res.status(200).send({ success: true, product });
-});
+  let user = req.body.user;
+  const { name, description, price, category, stock } = req.body;
+
+  const uploadImages = Promise.all(
+    req.files.map(async (file) => {
+      const params = {
+        Bucket: config.aws.awsBucketName,
+        Key: new Date().toISOString() + file.originalname,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
+      const result = await s3.upload(params).promise();
+      return result.Location;
+    })
+  );
+
+  const images = (await uploadImages).map((url) => ({ url }));
+
+  const productDetails = new db.product({
+    name,
+    description,
+    price,
+    images,
+    stock,
+    category,
+    user,
+  });
+
+  try {
+    const product = await db.product.create(productDetails);
+    res.status(201).json({ success: true, product });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
 
 // get product
 const getProduct = catchAsyncErrors(async (req, res, next) => {
@@ -47,6 +81,20 @@ const getAllProducts = catchAsyncErrors(async (req, res) => {
   }
 });
 
+// get admin products
+const getAdminProducts = async (req, res) => {
+  try {
+    const products = await db.product.find();
+
+    res.status(200).json({
+      success: true,
+      products,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to retrieve products" });
+  }
+};
+
 // update product
 const updateProduct = catchAsyncErrors(async (req, res, next) => {
   const productId = req.params.id;
@@ -72,7 +120,8 @@ const updateProduct = catchAsyncErrors(async (req, res, next) => {
 
 // Delete Product
 const deleteProduct = async (req, res, next) => {
-  const product = await db.product.findById(req.params.id);
+  const productId = req.params.id;
+  const product = await db.product.findById(productId);
 
   if (!product) {
     return res
@@ -176,6 +225,7 @@ module.exports = {
   createProduct,
   getProduct,
   getAllProducts,
+  getAdminProducts,
   updateProduct,
   deleteProduct,
   createProductReviwe,
