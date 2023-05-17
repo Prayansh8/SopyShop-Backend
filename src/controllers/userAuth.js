@@ -8,24 +8,22 @@ const jwt = require("jsonwebtoken");
 const { uploadImage } = require("../uploder/upload");
 
 const getUsers = async (req, res) => {
-  const data = await db.user.find({
-    name: 1,
-    email: 1,
-    role: 1,
-    createdAt: 1,
-    createdAt: 1,
-    avatar: 1,
-  });
-  return res.send(data);
+  try {
+    const usersData = await db.user.find().select("-password");
+    return res.status(200).send({ success: true, users: usersData });
+  } catch (error) {
+    return res.status(401).send({ success: false, message: "users not found" });
+  }
 };
 
 const getUser = async (req, res) => {
-  const userId = req.params._id;
-  const data = await db.user.findOne(userId, {
-    name: 1,
-    email: 1,
-  });
-  return res.send(data);
+  try {
+    const userId = req.params._id;
+    const user = await db.user.findOne(userId, {});
+    return res.status(200).send({ success: true, user: user });
+  } catch (error) {
+    return res.status(401).send({ success: false, message: "users not found" });
+  }
 };
 
 const updateUser = async (req, res) => {
