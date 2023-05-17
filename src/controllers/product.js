@@ -96,27 +96,27 @@ const getAdminProducts = async (req, res) => {
 };
 
 // update product
-const updateProduct = catchAsyncErrors(async (req, res, next) => {
+const updateProduct = async (req, res, next) => {
   const productId = req.params.id;
-  const productData = req.body;
+  const { name, description, price, category, stock } = req.body;
 
-  let product = null;
+  const productData = {
+    name,
+    description,
+    price,
+    category,
+    stock,
+  };
   try {
-    product = await db.product.findByIdAndUpdate(
-      productId,
-      productData,
-      { new: true },
-      (err) => {
-        if (err) throw err;
-        console.log(err);
-      }
-    );
+    product = await db.product.findByIdAndUpdate(productId, productData, {
+      new: true,
+    });
     const productDetails = await db.product.findById(productId);
     return res.status(200).send({ success: true, productDetails });
   } catch (error) {
-    return res.status(400).send({ success: false, productData, productId });
+    return res.status(400).send({ success: false });
   }
-});
+};
 
 // Delete Product
 const deleteProduct = async (req, res, next) => {
