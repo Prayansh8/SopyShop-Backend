@@ -18,9 +18,15 @@ const getUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const userId = req.params._id;
-    const user = await db.user.findOne(userId, {});
-    return res.status(200).send({ success: true, user: user });
+    const user = await db.user.findById(req.params.id).select("-password");
+
+    if (!user) {
+      return res
+        .status(500)
+        .send({ success: false, massage: "Product not found" });
+    }
+
+    return res.status(200).send({ success: true, user });
   } catch (error) {
     return res.status(401).send({ success: false, message: "users not found" });
   }
