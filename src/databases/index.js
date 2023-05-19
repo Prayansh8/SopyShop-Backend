@@ -8,7 +8,7 @@ const Order = require("./modals/Order");
 dotenv.config();
 
 const connect = async () => {
-  const mongoUrl = `${config.mongo.url}${config.mongo.db}`;
+  const mongoUrl = `${config.mongo.url}`;
   await mongoose
     .connect(mongoUrl)
     .then(() => console.log("MongoDb Connected!!"))
