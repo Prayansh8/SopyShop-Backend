@@ -50,9 +50,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send("GET request to the homepage");
-});
 const userRouter = express.Router();
 userRouter.post("/register", upload.single("avatar"), signUp);
 userRouter.post("/get-token", signIn);
