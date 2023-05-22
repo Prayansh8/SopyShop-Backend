@@ -88,6 +88,21 @@ const deleteUser = async (req, res) => {
   return res.send({ detail: "User Deleted" });
 };
 
+const deleteUserByAdmin = async (req, res) => {
+  const userId = req.params.id;
+  const user = await db.user.findById(userId);
+
+  if (!user) {
+    return res.status(500).send({ success: true, massage: "user not found" });
+  }
+
+  await user.remove();
+
+  return res
+    .status(200)
+    .send({ success: true, massage: "User Deleted Successfull" });
+};
+
 // logOut user
 const logoutUser = catchAsyncErrors(async (req, res, next) => {
   try {
@@ -251,4 +266,5 @@ module.exports = {
   updateUserRole,
   getUserDetails,
   updateAvatar,
+  deleteUserByAdmin,
 };
