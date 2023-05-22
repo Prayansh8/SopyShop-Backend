@@ -11,6 +11,7 @@ const {
   updatePassword,
   updateUserRole,
   deleteUser,
+  deleteUserByAdmin,
   updateAvatar,
 } = require("./controllers/userAuth");
 const {
@@ -79,11 +80,12 @@ userAuthRouter.patch(
   autherizeRoles("admin"),
   updateUserRole
 );
+userAuthRouter.delete("/delete/user", isAuthenticatedUser, deleteUser);
 userAuthRouter.delete(
-  "/admin/delete-user",
+  "/admin/delete/:id",
   isAuthenticatedUser,
   autherizeRoles("admin"),
-  deleteUser
+  deleteUserByAdmin
 );
 
 const productRouter = express.Router();
