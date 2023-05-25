@@ -35,6 +35,7 @@ const {
   updateOrder,
   deleteOrder,
 } = require("./controllers/order");
+const { processPayment, sendStripeApiKey } = require("./controllers/payment");
 
 // middlewere for error
 const cors = require("cors");
@@ -120,6 +121,10 @@ productRouter.put("/product/review", isAuthenticatedUser, createProductReviwe);
 productRouter.get("/reviews", getAllProductsReviews);
 productRouter.delete("/delete/review", isAuthenticatedUser, deleteReviewes);
 
+const paymentRouter = express.Router();
+paymentRouter.post("/payment/process", isAuthenticatedUser, processPayment);
+paymentRouter.get("/stripeapikey", isAuthenticatedUser, sendStripeApiKey);
+
 const orderRouter = express.Router();
 orderRouter.post("/order/new", isAuthenticatedUser, newOrder);
 orderRouter.get(
@@ -152,6 +157,7 @@ app.use("/api/v1", userRouter);
 app.use("/api/v1", userAuthRouter);
 app.use("/api/v1", productRouter);
 app.use("/api/v1", orderRouter);
+app.use("/api/v1", paymentRouter);
 
 app.listen(config.port, () =>
   console.log(`Example app listening on port ${config.baseUrl}:${config.port}`)

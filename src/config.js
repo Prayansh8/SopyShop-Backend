@@ -26,6 +26,14 @@ const config = {
       "/qqhB6WcL3y0BpMILjWIMk3PaLCK+zWkOAUupyiK",
     awsReasion: process.env.AWS_REASION || "ap-south-1",
   },
+  stripe: {
+    stripeKey:
+      process.env.STRIPE_API_KEY ||
+      "pk_test_51NBJjqSHHwsm4i0iP267XyzQXcD87NNlb17LHQBCZ4nTY7eCXF8O846cYWMraeTBkgmf9dbZpjdMQ5jzKAK9Vhmv00c5blnWIB",
+    stripeSecret:
+      process.env.STRIPE_SECRET_KEY ||
+      "sk_test_51NBJjqSHHwsm4i0i8W2CFHCSFmWaLw7HN8Bhyd17PZ5djOSLAR3iZYcy1LiYrJ63gu6uCWFdQBReOHfMWDagpIXA00KZguMeXf",
+  },
 };
 
 module.exports = { config };
