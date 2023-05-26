@@ -1,28 +1,36 @@
 const { db } = require("../databases/index");
 
 const newOrder = async (req, res, next) => {
-  const {
-    shippingInfo,
-    orderItems,
-    paymentInfo,
-    itemPrice,
-    taxPrice,
-    shippingPrice,
-    totalPrice,
-  } = req.body;
-  const order = await db.order.create({
-    shippingInfo,
-    orderItems,
-    paymentInfo,
-    itemPrice,
-    taxPrice,
-    shippingPrice,
-    totalPrice,
-    paidAt: Date.now(),
-    user: req.user.user._id,
-  });
+  try {
+    const {
+      shippingInfo,
+      orderItems,
+      paymentInfo,
+      itemPrice,
+      taxPrice,
+      shippingPrice,
+      totalPrice,
+    } = req.body;
 
-  return res.status(200).send({ success: true, order });
+    const orderData = {
+      shippingInfo,
+      orderItems,
+      paymentInfo,
+      itemPrice,
+      taxPrice,
+      shippingPrice,
+      totalPrice,
+      paidAt: Date.now(),
+      user: req.user.user._id,
+    };
+
+    const order = await db.order(orderData);
+    order.save();
+
+    return res.status(200).send({ success: true, order });
+  } catch (error) {
+    return res.status(400).send({ success: false, message: error });
+  }
 };
 
 const getSingleOrder = async (req, res, next) => {
