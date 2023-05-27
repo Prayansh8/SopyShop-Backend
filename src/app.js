@@ -117,7 +117,7 @@ productRouter.delete(
   autherizeRoles("admin"),
   deleteProduct
 );
-productRouter.put("/product/review", isAuthenticatedUser, createProductReviwe);
+productRouter.put("/review", isAuthenticatedUser, createProductReviwe);
 productRouter.get("/reviews", getAllProductsReviews);
 productRouter.delete("/delete/review", isAuthenticatedUser, deleteReviewes);
 
