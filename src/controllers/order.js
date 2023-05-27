@@ -63,15 +63,15 @@ const myOrders = async (req, res, next) => {
 
 const getAllOrders = async (req, res, next) => {
   try {
-    const order = await db.order.find();
-    if (!order) {
+    const orders = await db.order.find();
+    if (!orders) {
       return res.status(404).send("orders not found");
     }
     var totalAmount = 0;
-    order.forEach((order) => {
+    orders.forEach((order) => {
       totalAmount += order.totalPrice;
     });
-    return res.status(200).send({ success: true, totalAmount, order });
+    return res.status(200).send({ success: true, totalAmount, orders });
   } catch (error) {
     console.error(`Failed to get post, error: ${error.message}`);
   }
