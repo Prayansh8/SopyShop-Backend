@@ -133,7 +133,7 @@ orderRouter.get(
   autherizeRoles("admin"),
   getSingleOrder
 );
-orderRouter.get("/my-orders", isAuthenticatedUser, myOrders);
+orderRouter.get("/my/orders", isAuthenticatedUser, myOrders);
 orderRouter.get(
   "/admin/orders",
   isAuthenticatedUser,
