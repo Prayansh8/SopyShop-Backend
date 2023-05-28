@@ -84,7 +84,7 @@ const updateOrder = async (req, res, next) => {
       return res.status(404).send("orders not found");
     }
     if (order.orderStatus === "Delivered") {
-      return res.status(404).send("you have deliverder this product");
+      return res.status(200).send("you have deliverder this product");
     }
     order.orderItems.forEach(async (order) => {
       await updateStock(order.product, order.quantity);
