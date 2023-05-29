@@ -130,7 +130,6 @@ orderRouter.post("/order/new", isAuthenticatedUser, newOrder);
 orderRouter.get(
   "/order/:id",
   isAuthenticatedUser,
-  autherizeRoles("admin"),
   getSingleOrder
 );
 orderRouter.get("/my/orders", isAuthenticatedUser, myOrders);
