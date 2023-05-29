@@ -221,7 +221,7 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
 
 const updateUserRole = async (req, res, next) => {
   const email = req.body.email;
-  const newRole = req.body.newRole;
+  const newRole = req.body.role;
 
   const user = await db.user.findOneAndUpdate(
     { email: email },
