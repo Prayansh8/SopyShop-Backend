@@ -7,6 +7,8 @@ const { uploadImage } = require("../uploder/upload");
 const signUp = async (req, res, next) => {
   const { name, email, password } = req.body;
 
+  const userEmail = email.toLowerCase();
+
   if (name === "") {
     return res
       .status(400)
@@ -44,7 +46,7 @@ const signUp = async (req, res, next) => {
 
   const user = await db.user({
     name,
-    email,
+    email: userEmail,
     password: passHash,
     avatar: "",
   });
