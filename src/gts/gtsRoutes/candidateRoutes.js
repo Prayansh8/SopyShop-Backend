@@ -1,5 +1,5 @@
 const express = require("express");
-const candidateController = require("../controllers/candidateController");
+const candidateController = require("../gtsControllers/candidateController");
 const router = express.Router();
 router.post("/create", candidateController.createCandidate);
 router.get("/all", candidateController.getAllCandidates);

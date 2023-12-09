@@ -36,8 +36,8 @@ const {
   deleteOrder,
 } = require("./controllers/order");
 const { processPayment, sendStripeApiKey } = require("./controllers/payment");
-const authRoutes = require("./gts/routes/authRoutes");
-const candidateRoutes = require("./gts/routes/candidateRoutes");
+const authRoutes = require("./gts/gtsRoutes/authRoutes");
+const candidateRoutes = require("./gts/gtsRoutes/candidateRoutes");
 // middlewere for error
 const cors = require("cors");
 

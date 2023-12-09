@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../gtsModels/gtsUser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 

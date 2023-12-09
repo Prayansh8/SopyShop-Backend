@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const candidateSchema = new mongoose.Schema({
+const gtsCandidateSchema = new mongoose.Schema({
   timestamp: {
     type: String,
   },
@@ -26,5 +26,5 @@ const candidateSchema = new mongoose.Schema({
     type: String,
   },
 });
-const Candidate = mongoose.model("Candidate", candidateSchema);
-module.exports = Candidate;
+const GtsCandidate = mongoose.model("GtsCandidate", gtsCandidateSchema);
+module.exports = GtsCandidate;

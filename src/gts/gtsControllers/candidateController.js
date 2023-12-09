@@ -1,8 +1,8 @@
-const Candidate = require("../models/candidate");
+const GtsCandidate = require("../gtsModels/gtsCandidate");
 exports.createCandidate = async (req, res) => {
   const { name, category, phone, address } = req.body;
   try {
-    const newCandidate = new Candidate({ name, category, phone, address });
+    const newCandidate = new GtsCandidate({ name, category, phone, address });
     await newCandidate.save();
     res.status(201).json({ message: "Candidate created successfully" });
   } catch (error) {
@@ -12,7 +12,7 @@ exports.createCandidate = async (req, res) => {
 
 exports.getAllCandidates = async (req, res) => {
   try {
-    const candidates = await Candidate.find();
+    const candidates = await GtsCandidate.find();
     res.json(candidates);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -21,7 +21,7 @@ exports.getAllCandidates = async (req, res) => {
 
 exports.getCandidate = async (req, res) => {
   try {
-    const candidate = await Candidate.findById(req.params.id);
+    const candidate = await GtsCandidate.findById(req.params.id);
     if (candidate) {
       res.json(candidate);
     } else {
@@ -34,7 +34,7 @@ exports.getCandidate = async (req, res) => {
 
 exports.updateCandidate = async (req, res) => {
   try {
-    const candidate = await Candidate.findByIdAndUpdate(
+    const candidate = await GtsCandidate.findByIdAndUpdate(
       req.params.id,
       req.body,
       {
