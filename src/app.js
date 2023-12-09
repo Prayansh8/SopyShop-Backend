@@ -36,7 +36,8 @@ const {
   deleteOrder,
 } = require("./controllers/order");
 const { processPayment, sendStripeApiKey } = require("./controllers/payment");
-
+const authRoutes = require("./gts/routes/authRoutes");
+const candidateRoutes = require("./gts/routes/candidateRoutes");
 // middlewere for error
 const cors = require("cors");
 
@@ -127,11 +128,7 @@ paymentRouter.get("/stripeapikey", isAuthenticatedUser, sendStripeApiKey);
 
 const orderRouter = express.Router();
 orderRouter.post("/order/new", isAuthenticatedUser, newOrder);
-orderRouter.get(
-  "/order/:id",
-  isAuthenticatedUser,
-  getSingleOrder
-);
+orderRouter.get("/order/:id", isAuthenticatedUser, getSingleOrder);
 orderRouter.get("/my/orders", isAuthenticatedUser, myOrders);
 orderRouter.get(
   "/admin/orders",
@@ -157,6 +154,10 @@ app.use("/api/v1", userAuthRouter);
 app.use("/api/v1", productRouter);
 app.use("/api/v1", orderRouter);
 app.use("/api/v1", paymentRouter);
+
+//  GTS - Chanderi
+app.use("/gts/auth", authRoutes);
+app.use("/gts/candidate", candidateRoutes);
 
 app.listen(config.port, () =>
   console.log(`Example app listening on port ${config.baseUrl}:${config.port}`)
