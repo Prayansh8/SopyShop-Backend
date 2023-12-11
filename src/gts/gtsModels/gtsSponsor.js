@@ -1,34 +1,29 @@
 const mongoose = require("mongoose");
 const moment = require("moment");
 
-const gtsCandidateSchema = new mongoose.Schema({
-  timestamp: {
-    type: String,
-  },
+const gtsSponsor = new mongoose.Schema({
   name: {
     type: String,
     required: true,
   },
-  phoneNumber: {
+  phone: {
     type: String,
     required: true,
   },
-  performance: {
+  address: {
     type: String,
     required: true,
   },
-  currentLocation: {
+  shopName: {
     type: String,
     required: true,
   },
-  socialLinks: {
+  amount: {
     type: String,
-  },
-  heardAboutUs: {
-    type: String,
+    required: true,
   },
   createdAt: { type: Date, default: moment.utc().toISOString() },
   updatedAt: { type: Date, default: moment.utc().toISOString() },
 });
-const GtsCandidate = mongoose.model("GtsCandidate", gtsCandidateSchema);
-module.exports = GtsCandidate;
+const Sponsor = mongoose.model("GtsSponsor", gtsSponsor);
+module.exports = Sponsor;
