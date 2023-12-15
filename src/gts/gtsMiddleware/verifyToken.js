@@ -1,14 +1,24 @@
-const jwt = require("jsonwebtoken");
-module.exports = (req, res, next) => {
-  const token = req.header("Authorization");
-  if (!token) {
-    return res.status(401).json({ error: "Access denied. Token is missing" });
-  }
+// Middleware to verify JWT
+const verifyToken = (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, "secret_key");
-    req.user = decoded;
-    next();
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    jwt.verify(token, "your-secret-key", (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: "Invalid token" });
+      }
+
+      req.userId = decoded.userId;
+      next();
+    });
+    return res.status(200).json({ message: "Success" });
   } catch (error) {
-    res.status(401).json({ error: "Invalid token" });
+    return res.status(404).json({ error });
   }
 };
+
+module.exports = { verifyToken };

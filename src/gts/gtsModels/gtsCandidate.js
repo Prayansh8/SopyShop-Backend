@@ -27,6 +27,8 @@ const gtsCandidateSchema = new mongoose.Schema({
   heardAboutUs: {
     type: String,
   },
+  scores: [{ judgeId: String, score: { type: Number, default: 0, max: 10 } }],
+  note: { type: String },
   createdAt: { type: Date, default: moment.utc().toISOString() },
   updatedAt: { type: Date, default: moment.utc().toISOString() },
 });

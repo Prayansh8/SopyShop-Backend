@@ -4,18 +4,18 @@ exports.createCandidate = async (req, res) => {
   try {
     const newCandidate = new GtsCandidate({ name, category, phone, address });
     await newCandidate.save();
-    res.status(201).json({ message: "Candidate created successfully" });
+    return res.status(201).json({ message: "Candidate created successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 exports.getAllCandidates = async (req, res) => {
   try {
     const candidates = await GtsCandidate.find();
-    res.json(candidates);
+    return res.json(candidates);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -23,12 +23,12 @@ exports.getCandidate = async (req, res) => {
   try {
     const candidate = await GtsCandidate.findById(req.params.id);
     if (candidate) {
-      res.json(candidate);
+      return res.json(candidate);
     } else {
-      res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -42,11 +42,39 @@ exports.updateCandidate = async (req, res) => {
       }
     );
     if (candidate) {
-      res.json(candidate);
+      return res.json(candidate);
     } else {
-      res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.newScore = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const judgeId = req.userId; // Assuming userId is included in the request
+    const { score } = req.body;
+
+    const updatedCandidate = await GtsCandidate.findByIdAndUpdate(
+      id,
+      {
+        $set: { "scores.$[elem].score": score },
+      },
+      {
+        arrayFilters: [{ "elem.judgeId": judgeId }],
+        new: true,
+      }
+    );
+
+    if (!updatedCandidate) {
+      return res.status(404).json({ error: "Candidate not found" });
+    }
+
+    res.status(200).json(updatedCandidate);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
