@@ -12,9 +12,11 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
-    res.status(201).json({ message: "User registered successfully", newUser });
+    return res
+      .status(201)
+      .json({ message: "User registered successfully", newUser });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -32,8 +34,8 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ username: user.username }, "secret_key", {
       expiresIn: "4d",
     });
-    res.json({ token });
+    return res.status(200).json({ token, message:"Login Success" });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
