@@ -5,5 +5,5 @@ router.post("/create", candidateController.createCandidate);
 router.get("/all", candidateController.getAllCandidates);
 router.get("/:id", candidateController.getCandidate);
 router.patch("/update/:id", candidateController.updateCandidate);
-router.put("/score/:id", candidateController.newScore);
+router.post("/score/:id", candidateController.newScore);
 module.exports = router;
