@@ -1,10 +1,9 @@
 const express = require("express");
 const candidateController = require("../gtsControllers/candidateController");
-const { verifyToken } = require("../gtsMiddleware/verifyToken");
 const router = express.Router();
-router.post("/create", verifyToken, candidateController.createCandidate);
-router.get("/all", verifyToken, candidateController.getAllCandidates);
-router.get("/:id", verifyToken, candidateController.getCandidate);
-router.patch("/update/:id", verifyToken, candidateController.updateCandidate);
-router.put("/score/:id", verifyToken, candidateController.newScore);
+router.post("/create", candidateController.createCandidate);
+router.get("/all", candidateController.getAllCandidates);
+router.get("/:id", candidateController.getCandidate);
+router.patch("/update/:id", candidateController.updateCandidate);
+router.put("/score/:id", candidateController.newScore);
 module.exports = router;
