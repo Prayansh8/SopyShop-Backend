@@ -1,8 +1,8 @@
 const Sponsor = require("../gtsModels/gtsSponsor");
 
 exports.createSponsor = async (req, res) => {
-  const { name, phone, address, shopName, amount } = req.body;
-  console.log(name, phone);
+  const { name, phone, address, shopName, amount, amountStatus, note } =
+    req.body;
   try {
     const newsponsor = new Sponsor({
       name,
@@ -10,6 +10,7 @@ exports.createSponsor = async (req, res) => {
       address,
       shopName,
       amount,
+      amountStatus,
       note,
     });
     await newsponsor.save();
