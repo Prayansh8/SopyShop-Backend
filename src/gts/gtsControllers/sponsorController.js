@@ -10,9 +10,12 @@ exports.createSponsor = async (req, res) => {
       address,
       shopName,
       amount,
+      note,
     });
     await newsponsor.save();
-    res.status(201).json({ message: "New Sponsor created successfully", newsponsor });
+    res
+      .status(201)
+      .json({ message: "New Sponsor created successfully", newsponsor });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }

@@ -22,6 +22,10 @@ const gtsSponsor = new mongoose.Schema({
     type: String,
     required: true,
   },
+  amountStatus: {
+    type: String,
+  },
+  note: { type: String },
   createdAt: { type: Date, default: moment.utc().toISOString() },
   updatedAt: { type: Date, default: moment.utc().toISOString() },
 });
