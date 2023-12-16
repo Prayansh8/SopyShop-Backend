@@ -32,9 +32,9 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
     const token = jwt.sign({ username: user.username }, "secret_key", {
-      expiresIn: "4d",
+      expiresIn: "30d",
     });
-    return res.status(200).json({ token, message:"Login Success" });
+    return res.status(200).json({ token, message: "Login Success" });
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
   }

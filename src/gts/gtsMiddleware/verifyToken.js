@@ -1,24 +1,18 @@
-// Middleware to verify JWT
 const verifyToken = (req, res, next) => {
-  try {
-    const token = req.headers.authorization;
+  const token = req.headers["authorization"];
 
-    if (!token) {
-      return res.status(401).json({ error: "Unauthorized" });
+  if (!token) {
+    return res.status(403).json({ error: "Token not provided" });
+  }
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) {
+      return res.status(401).json({ error: "Failed to authenticate token" });
     }
 
-    jwt.verify(token, "your-secret-key", (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "Invalid token" });
-      }
-
-      req.userId = decoded.userId;
-      next();
-    });
-    return res.status(200).json({ message: "Success" });
-  } catch (error) {
-    return res.status(404).json({ error });
-  }
+    req.user = user;
+    next();
+  });
 };
 
 module.exports = { verifyToken };
