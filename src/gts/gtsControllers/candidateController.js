@@ -1,7 +1,6 @@
 const GtsCandidate = require("../gtsModels/gtsCandidate");
 exports.createCandidate = async (req, res) => {
   const {
-    timestamp,
     name,
     phoneNumber,
     performance,
@@ -13,7 +12,6 @@ exports.createCandidate = async (req, res) => {
   console.log()
   try {
     const newCandidate = new GtsCandidate({
-      timestamp,
       name,
       phoneNumber,
       performance,
