@@ -1,8 +1,27 @@
 const GtsCandidate = require("../gtsModels/gtsCandidate");
 exports.createCandidate = async (req, res) => {
-  const { name, category, phone, address } = req.body;
+  const {
+    timestamp,
+    name,
+    phoneNumber,
+    performance,
+    currentLocation,
+    socialLinks,
+    heardAboutUs,
+    note,
+  } = req.body;
+  console.log()
   try {
-    const newCandidate = new GtsCandidate({ name, category, phone, address });
+    const newCandidate = new GtsCandidate({
+      timestamp,
+      name,
+      phoneNumber,
+      performance,
+      currentLocation,
+      socialLinks,
+      heardAboutUs,
+      note,
+    });
     await newCandidate.save();
     return res.status(201).json({ message: "Candidate created successfully" });
   } catch (error) {
