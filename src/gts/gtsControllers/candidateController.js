@@ -1,5 +1,7 @@
 const GtsCandidate = require("../gtsModels/gtsCandidate");
 exports.createCandidate = async (req, res) => {
+  const nextCandidateId = await getNextCandidateId();
+
   const {
     name,
     phoneNumber,
@@ -9,7 +11,7 @@ exports.createCandidate = async (req, res) => {
     heardAboutUs,
     note,
   } = req.body;
-  console.log()
+  console.log();
   try {
     const newCandidate = new GtsCandidate({
       name,
@@ -19,6 +21,7 @@ exports.createCandidate = async (req, res) => {
       socialLinks,
       heardAboutUs,
       note,
+      candidateId: nextCandidateId,
     });
     await newCandidate.save();
     return res.status(201).json({ message: "Candidate created successfully" });
@@ -92,3 +95,20 @@ exports.newScore = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+async function getNextCandidateId() {
+  try {
+    const highestCandidate = await GtsCandidate.findOne({}, { candidateId: 1 })
+      .sort({ candidateId: -1 })
+      .exec();
+
+    const nextCandidateId = highestCandidate
+      ? parseInt(highestCandidate.candidateId) + 1
+      : 1;
+
+    return nextCandidateId.toString();
+  } catch (error) {
+    console.error("Error getting next candidateId:", error);
+    throw error;
+  }
+}
