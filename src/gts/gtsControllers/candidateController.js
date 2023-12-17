@@ -53,8 +53,8 @@ exports.updateCandidate = async (req, res) => {
 };
 
 exports.newScore = async (req, res) => {
-  const { candidateId, judgeId, scoreValue } = req.body;
-
+  const { candidateId, scoreValue } = req.body;
+  const judgeId = "65745dc3c655fd6e36a65334";
   try {
     const candidate = await GtsCandidate.findById(candidateId);
 
