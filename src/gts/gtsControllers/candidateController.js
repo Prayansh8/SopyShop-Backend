@@ -33,21 +33,22 @@ exports.getCandidate = async (req, res) => {
 };
 
 exports.updateCandidate = async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+  console.log(id, updateData);
   try {
-    const candidate = await GtsCandidate.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-      }
-    );
-    if (candidate) {
-      return res.json(candidate);
-    } else {
-      return res.status(404).json({ message: "User not found" });
+    const candidate = await GtsCandidate.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    if (!candidate) {
+      return res.status(404).json({ message: "GtsCandidate not found" });
     }
+
+    return res.json(candidate);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.error("Error updating GtsCandidate:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
