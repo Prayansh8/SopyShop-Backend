@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 
 const gtsCandidateSchema = new mongoose.Schema({
-  timestamp: {type: String},
+  timestamp: { type: String },
   name: {
     type: String,
     required: true,
@@ -26,7 +26,7 @@ const gtsCandidateSchema = new mongoose.Schema({
     type: String,
   },
   candidateId: { type: String },
-  scores: [{ judgeId: String, score: { type: Number, default: 0, max: 10 } }],
+  scores: [{ judgeId: String, score: Number }],
   note: { type: String },
   status: {
     type: String,
