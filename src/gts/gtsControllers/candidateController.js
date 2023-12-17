@@ -53,21 +53,21 @@ exports.getCandidate = async (req, res) => {
 };
 
 exports.updateCandidate = async (req, res) => {
-  try {
-    const candidate = await GtsCandidate.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-      }
-    );
-    if (candidate) {
-      return res.json(candidate);
-    } else {
-      return res.status(404).json({ message: "User not found" });
-    }
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+  const { candidateId } = req.params;
+  const updatedFields = req.body;
+
+  const candidateIndex = candidates.findIndex(
+    (candidate) => candidate.candidateId == candidateId
+  );
+
+  if (candidateIndex !== -1) {
+    candidates[candidateIndex] = {
+      ...candidates[candidateIndex],
+      ...updatedFields,
+    };
+    res.json({ success: true, message: "Candidate updated successfully" });
+  } else {
+    res.status(404).json({ success: false, message: "Candidate not found" });
   }
 };
 
