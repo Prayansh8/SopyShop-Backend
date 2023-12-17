@@ -53,7 +53,7 @@ exports.updateCandidate = async (req, res) => {
 };
 
 exports.newScore = async (req, res) => {
-  const { candidateId, scoreValue } = req.body;
+  const { candidateId, score } = req.body;
   const judgeId = "65745dc3c655fd6e36a65334";
   try {
     const gtsCandidate = await GtsCandidate.findOne({ candidateId });
@@ -62,16 +62,20 @@ exports.newScore = async (req, res) => {
       return res.status(404).json({ error: "Candidate not found" });
     }
 
-    const existingScore = gtsCandidate.scores.find(
+    // Check if the judgeId already exists
+    const existingScoreIndex = gtsCandidate.scores.findIndex(
       (s) => s.judgeId === judgeId
     );
 
-    if (existingScore) {
-      existingScore.score = score;
+    if (existingScoreIndex !== -1) {
+      // If judgeId exists, update the score
+      gtsCandidate.scores[existingScoreIndex].score = score;
     } else {
+      // If judgeId doesn't exist, add a new score
       gtsCandidate.scores.push({ judgeId, score });
     }
 
+    // Save the updated GtsCandidate
     await gtsCandidate.save();
 
     return res
