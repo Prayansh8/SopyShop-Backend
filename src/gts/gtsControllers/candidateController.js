@@ -33,48 +33,50 @@ exports.getCandidate = async (req, res) => {
 };
 
 exports.updateCandidate = async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+  console.log(id, updateData);
   try {
-    const candidate = await GtsCandidate.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-      }
-    );
-    if (candidate) {
-      return res.json(candidate);
-    } else {
-      return res.status(404).json({ message: "User not found" });
+    const candidate = await GtsCandidate.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    if (!candidate) {
+      return res.status(404).json({ message: "GtsCandidate not found" });
     }
+
+    return res.json(candidate);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.error("Error updating GtsCandidate:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 exports.newScore = async (req, res) => {
+  const { candidateId, judgeId, scoreValue } = req.body;
+
   try {
-    const { id } = req.params;
-    const judgeId = req.userId; // Assuming userId is included in the request
-    const { score } = req.body;
+    const candidate = await GtsCandidate.findById(candidateId);
 
-    const updatedCandidate = await GtsCandidate.findByIdAndUpdate(
-      id,
-      {
-        $set: { "scores.$[elem].score": score },
-      },
-      {
-        arrayFilters: [{ "elem.judgeId": judgeId }],
-        new: true,
-      }
-    );
-
-    if (!updatedCandidate) {
-      return res.status(404).json({ error: "Candidate not found" });
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
     }
 
-    res.status(200).json(updatedCandidate);
+    const existingScoreIndex = candidate.scores.findIndex(
+      (s) => s.judgeId === judgeId
+    );
+
+    if (existingScoreIndex !== -1) {
+      candidate.scores[existingScoreIndex].score = scoreValue;
+    } else {
+      candidate.scores.push({ judgeId, score: scoreValue });
+    }
+
+    const updatedCandidate = await candidate.save();
+
+    return res.json(updatedCandidate);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error creating/updating candidate score:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
