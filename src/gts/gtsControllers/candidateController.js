@@ -53,7 +53,6 @@ exports.getCandidate = async (req, res) => {
 exports.updateCandidate = async (req, res) => {
   const { id } = req.params;
   const updateData = req.body;
-  console.log(id, updateData);
   try {
     const candidate = await GtsCandidate.findByIdAndUpdate(id, updateData, {
       new: true,
@@ -73,8 +72,7 @@ exports.updateCandidate = async (req, res) => {
 exports.newScore = async (req, res) => {
   try {
     const Id = req.params;
-    const { score } = req.body;
-    const judgeId = req.userId;
+    const { score, judgeId } = req.body;
 
     const objectIdCandidateId = Types.ObjectId(Id);
 
