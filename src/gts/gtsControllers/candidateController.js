@@ -1,26 +1,8 @@
 const GtsCandidate = require("../gtsModels/gtsCandidate");
 exports.createCandidate = async (req, res) => {
-  const nextCandidateId = await getNextCandidateId();
-  const {
-    name,
-    phoneNumber,
-    performance,
-    currentLocation,
-    socialLinks,
-    heardAboutUs,
-    note,
-  } = req.body;
+  const { name, category, phone, address } = req.body;
   try {
-    const newCandidate = new GtsCandidate({
-      name,
-      phoneNumber,
-      performance,
-      currentLocation,
-      socialLinks,
-      heardAboutUs,
-      note,
-      candidateId: nextCandidateId,
-    });
+    const newCandidate = new GtsCandidate({ name, category, phone, address });
     await newCandidate.save();
     return res.status(201).json({ message: "Candidate created successfully" });
   } catch (error) {
@@ -38,82 +20,61 @@ exports.getAllCandidates = async (req, res) => {
 };
 
 exports.getCandidate = async (req, res) => {
-  const candidateId = req.params;
-
   try {
-    const candidate = await GtsCandidate.findOne({
-      candidateId: String(candidateId),
-    });
-    if (!candidate) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Candidate not found" });
+    const candidate = await GtsCandidate.findById(req.params.id);
+    if (candidate) {
+      return res.json(candidate);
+    } else {
+      return res.status(404).json({ message: "User not found" });
     }
-
-    res.json({ success: true, candidate });
   } catch (error) {
-    console.error("Error fetching candidate:", error.message);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 exports.updateCandidate = async (req, res) => {
-  const candidateId = req.params;
-  const updatedFields = req.body;
-
-  const candidateIndex = GtsCandidate.findIndex(
-    (candidate) => candidate.candidateId == String(candidateId)
-  );
-
-  if (candidateIndex !== -1) {
-    GtsCandidate[candidateIndex] = {
-      ...GtsCandidate[candidateIndex],
-      ...updatedFields,
-    };
-    res.json({ success: true, message: "Candidate updated successfully" });
-  } else {
-    res.status(404).json({ success: false, message: "Candidate not found" });
+  try {
+    const candidate = await GtsCandidate.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+      }
+    );
+    if (candidate) {
+      return res.json(candidate);
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };
 
 exports.newScore = async (req, res) => {
   try {
-    const judgeId = req.user;
-    console.log(judgeId);
-    const { candidateId, score } = req.body;
-    console.log(candidateId, score);
-    const candidate = await GtsCandidate.findById(candidateId);
-    if (!candidate) {
-      return res.status(404).json({ message: "Candidate not found" });
+    const { id } = req.params;
+    const judgeId = req.userId; // Assuming userId is included in the request
+    const { score } = req.body;
+
+    const updatedCandidate = await GtsCandidate.findByIdAndUpdate(
+      id,
+      {
+        $set: { "scores.$[elem].score": score },
+      },
+      {
+        arrayFilters: [{ "elem.judgeId": judgeId }],
+        new: true,
+      }
+    );
+
+    if (!updatedCandidate) {
+      return res.status(404).json({ error: "Candidate not found" });
     }
-    const existingScore = candidate.scores.find((s) => s.judgeId === judgeId);
-    if (existingScore) {
-      existingScore.score = score;
-    } else {
-      candidate.scores.push({ judgeId, score });
-    }
-    candidate.updatedAt = new Date();
-    await candidate.save();
-    return res.status(200).json({ message: "Scores saved successfully" });
+
+    res.status(200).json(updatedCandidate);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-async function getNextCandidateId() {
-  try {
-    const highestCandidate = await GtsCandidate.findOne({}, { candidateId: 1 })
-      .sort({ candidateId: -1 })
-      .exec();
-
-    const nextCandidateId = highestCandidate
-      ? parseInt(highestCandidate.candidateId) + 1
-      : 1;
-
-    return nextCandidateId.toString();
-  } catch (error) {
-    console.error("Error getting next candidateId:", error);
-    throw error;
-  }
-}
