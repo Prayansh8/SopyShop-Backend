@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 
 const gtsCandidateSchema = new mongoose.Schema({
-  timestamp: { type: Number, default: new Date().getTime() },
+  timestamp: {type: String},
   name: {
     type: String,
     required: true,
