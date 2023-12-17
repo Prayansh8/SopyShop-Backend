@@ -86,7 +86,15 @@ exports.newScore = async (req, res) => {
       return res.status(404).json({ error: "Candidate not found" });
     }
 
-    gtsCandidate.scores.push({ judgeId, score });
+    const existingScoreIndex = gtsCandidate.scores.findIndex(
+      (s) => s.judgeId.toString() === judgeId.toString()
+    );
+
+    if (existingScoreIndex !== -1) {
+      gtsCandidate.scores[existingScoreIndex].score = score;
+    } else {
+      gtsCandidate.scores.push({ judgeId, score });
+    }
 
     await gtsCandidate.save();
 
