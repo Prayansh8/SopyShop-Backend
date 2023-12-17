@@ -38,15 +38,20 @@ exports.getAllCandidates = async (req, res) => {
 };
 
 exports.getCandidate = async (req, res) => {
+  const { candidateId } = req.params;
+
   try {
-    const candidate = await GtsCandidate.findById(req.params.id);
-    if (candidate) {
-      return res.json(candidate);
-    } else {
-      return res.status(404).json({ message: "User not found" });
+    const candidate = await GtsCandidate.findOne({ candidateId });
+    if (!candidate) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Candidate not found" });
     }
+
+    res.json({ success: true, candidate });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.error("Error fetching candidate:", error.message);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
