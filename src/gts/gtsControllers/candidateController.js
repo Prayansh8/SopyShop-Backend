@@ -38,10 +38,12 @@ exports.getAllCandidates = async (req, res) => {
 };
 
 exports.getCandidate = async (req, res) => {
-  const { candidateId } = req.params;
+  const candidateId = req.params;
 
   try {
-    const candidate = await GtsCandidate.findOne({ candidateId });
+    const candidate = await GtsCandidate.findOne({
+      candidateId: toString(candidateId),
+    });
     if (!candidate) {
       return res
         .status(404)
@@ -59,13 +61,13 @@ exports.updateCandidate = async (req, res) => {
   const { candidateId } = req.params;
   const updatedFields = req.body;
 
-  const candidateIndex = candidates.findIndex(
+  const candidateIndex = GtsCandidate.findIndex(
     (candidate) => candidate.candidateId == candidateId
   );
 
   if (candidateIndex !== -1) {
-    candidates[candidateIndex] = {
-      ...candidates[candidateIndex],
+    GtsCandidate[candidateIndex] = {
+      ...GtsCandidate[candidateIndex],
       ...updatedFields,
     };
     res.json({ success: true, message: "Candidate updated successfully" });
