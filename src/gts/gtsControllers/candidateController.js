@@ -42,7 +42,7 @@ exports.getCandidate = async (req, res) => {
 
   try {
     const candidate = await GtsCandidate.findOne({
-      candidateId: toString(candidateId),
+      candidateId: String(candidateId),
     });
     if (!candidate) {
       return res
@@ -58,11 +58,11 @@ exports.getCandidate = async (req, res) => {
 };
 
 exports.updateCandidate = async (req, res) => {
-  const { candidateId } = req.params;
+  const candidateId = req.params;
   const updatedFields = req.body;
 
   const candidateIndex = GtsCandidate.findIndex(
-    (candidate) => candidate.candidateId == candidateId
+    (candidate) => candidate.candidateId == String(candidateId)
   );
 
   if (candidateIndex !== -1) {
