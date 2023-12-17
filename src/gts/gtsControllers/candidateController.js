@@ -1,7 +1,6 @@
 const GtsCandidate = require("../gtsModels/gtsCandidate");
 exports.createCandidate = async (req, res) => {
   const nextCandidateId = await getNextCandidateId();
-
   const {
     name,
     phoneNumber,
@@ -11,7 +10,6 @@ exports.createCandidate = async (req, res) => {
     heardAboutUs,
     note,
   } = req.body;
-  console.log();
   try {
     const newCandidate = new GtsCandidate({
       name,
