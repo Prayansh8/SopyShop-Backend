@@ -71,11 +71,10 @@ exports.updateCandidate = async (req, res) => {
 };
 
 exports.newScore = async (req, res) => {
-  // const judgeId = "65745dc3c655fd6e36a65334";
   try {
     const Id = req.params;
-    const { judgeId, score } = req.body;
-    console.log(Id);
+    const { score } = req.body;
+    const judgeId = req.userId;
 
     const objectIdCandidateId = Types.ObjectId(Id);
 
