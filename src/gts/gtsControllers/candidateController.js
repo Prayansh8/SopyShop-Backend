@@ -56,27 +56,29 @@ exports.newScore = async (req, res) => {
   const { candidateId, scoreValue } = req.body;
   const judgeId = "65745dc3c655fd6e36a65334";
   try {
-    const candidate = await GtsCandidate.findById(candidateId);
+    const gtsCandidate = await GtsCandidate.findOne({ candidateId });
 
-    if (!candidate) {
-      return res.status(404).json({ message: "Candidate not found" });
+    if (!gtsCandidate) {
+      return res.status(404).json({ error: "Candidate not found" });
     }
 
-    const existingScoreIndex = candidate.scores.findIndex(
+    const existingScore = gtsCandidate.scores.find(
       (s) => s.judgeId === judgeId
     );
 
-    if (existingScoreIndex !== -1) {
-      candidate.scores[existingScoreIndex].score = scoreValue;
+    if (existingScore) {
+      existingScore.score = score;
     } else {
-      candidate.scores.push({ judgeId, score: scoreValue });
+      gtsCandidate.scores.push({ judgeId, score });
     }
 
-    const updatedCandidate = await candidate.save();
+    await gtsCandidate.save();
 
-    return res.json(updatedCandidate);
+    return res
+      .status(200)
+      .json({ message: "Score saved successfully", gtsCandidate });
   } catch (error) {
-    console.error("Error creating/updating candidate score:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
