@@ -1,8 +1,26 @@
 const GtsCandidate = require("../gtsModels/gtsCandidate");
+const { Types } = require("mongoose");
+
 exports.createCandidate = async (req, res) => {
-  const { name, phoneNumber, performance, currentLocation,socialLinks, heardAboutUs,note } = req.body;
+  const {
+    name,
+    phoneNumber,
+    performance,
+    currentLocation,
+    socialLinks,
+    heardAboutUs,
+    note,
+  } = req.body;
   try {
-    const newCandidate = new GtsCandidate({ name, phoneNumber, performance, currentLocation,socialLinks, heardAboutUs,note });
+    const newCandidate = new GtsCandidate({
+      name,
+      phoneNumber,
+      performance,
+      currentLocation,
+      socialLinks,
+      heardAboutUs,
+      note,
+    });
     await newCandidate.save();
     return res.status(201).json({ message: "Candidate created successfully" });
   } catch (error) {
@@ -53,29 +71,24 @@ exports.updateCandidate = async (req, res) => {
 };
 
 exports.newScore = async (req, res) => {
-  const { candidateId, score } = req.body;
-  const judgeId = "65745dc3c655fd6e36a65334";
+  // const judgeId = "65745dc3c655fd6e36a65334";
   try {
-    const gtsCandidate = await GtsCandidate.findOne({ candidateId });
+    const Id = req.params;
+    const { judgeId, score } = req.body;
+    console.log(Id);
+
+    const objectIdCandidateId = Types.ObjectId(Id);
+
+    const gtsCandidate = await GtsCandidate.findOne({
+      _id: objectIdCandidateId,
+    });
 
     if (!gtsCandidate) {
       return res.status(404).json({ error: "Candidate not found" });
     }
 
-    // Check if the judgeId already exists
-    const existingScoreIndex = gtsCandidate.scores.findIndex(
-      (s) => s.judgeId === judgeId
-    );
+    gtsCandidate.scores.push({ judgeId, score });
 
-    if (existingScoreIndex !== -1) {
-      // If judgeId exists, update the score
-      gtsCandidate.scores[existingScoreIndex].score = score;
-    } else {
-      // If judgeId doesn't exist, add a new score
-      gtsCandidate.scores.push({ judgeId, score });
-    }
-
-    // Save the updated GtsCandidate
     await gtsCandidate.save();
 
     return res
