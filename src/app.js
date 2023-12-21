@@ -55,7 +55,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 const userRouter = express.Router();
-userRouter.post("/register", upload.single("avatar"), signUp);
+userRouter.post("/register", signUp);
 userRouter.post("/get-token", signIn);
 
 const userAuthRouter = express.Router();
