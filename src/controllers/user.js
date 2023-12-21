@@ -2,12 +2,9 @@ const { db } = require("../databases/index");
 const jwt = require("jsonwebtoken");
 const { config } = require("../config");
 const bcrypt = require("bcrypt");
-const { uploadImage } = require("../uploder/upload");
 
 const signUp = async (req, res, next) => {
   const { name, email, password } = req.body;
-
-  const userEmail = email.toLowerCase();
 
   if (name === "") {
     return res
@@ -46,13 +43,11 @@ const signUp = async (req, res, next) => {
 
   const user = await db.user({
     name,
-    email: userEmail,
+    email: email,
     password: passHash,
     avatar: "",
   });
   try {
-    const uploadedImage = await uploadImage(req.file);
-    user.avatar = uploadedImage.Location;
     const newUser = await user.save();
     res.status(201).json({ success: true, newUser });
   } catch (err) {
