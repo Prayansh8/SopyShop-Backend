@@ -5,9 +5,9 @@ const config = {
     url: process.env.MONGO_URL || "mongodb+srv://Prayansh811:Prayansh811@cluster0.u7jcnaf.mongodb.net/sopyshop",
   },
   jwt: {
-    jwtSecretKey: process.env.JWT_SECRET_KEY,
-    tokenHeaderKey: process.env.TOKEN_HEADER_KEY,
-    localStorageTokenName: process.env.LOCAL_STORAGE_TOKEN_NAME,
+    jwtSecretKey: process.env.JWT_SECRET_KEY || 'sopyshop_jwt_secret_key',
+    tokenHeaderKey: process.env.TOKEN_HEADER_KEY || 'sopyshop_token_header_key',
+    localStorageTokenName: process.env.LOCAL_STORAGE_TOKEN_NAME || "local_storage_token_name",
   },
   mailer: {
     userMail: process.env.SMPT_MAIL,
