@@ -11,11 +11,10 @@ const UserSchema = new Schema({
     minLength: [4, "Name should have then 4 characters"],
     maxLength: [30, "Name cannot extract 30 characters"],
   },
-  email: {
+  username: {
     type: String,
-    required: [true, "Plese Enter Your Email"],
+    required: [true, "Plese Enter Your username"],
     unique: true,
-    validate: [validator.isEmail, "Please Enter a valid Email"],
   },
   password: {
     type: String,
