@@ -3,24 +3,27 @@ const jwt = require("jsonwebtoken");
 const { config } = require("../config");
 const bcrypt = require("bcrypt");
 
+
 const signUp = async (req, res, next) => {
-  const { name, userName, password } = req.body;
-  const existingUser = await db.user.findOne({ userName: userName });
-
-  if (existingUser) {
-    return res
-      .status(400)
-      .send({ success: false, message: "User email exist" });
-  }
-
-  const userNamee = userName.toLowerCase();
-  const user = ({
-    name,
-    username: userNamee,
-    password,
-  });
-
   try {
+    const { name, userName, password } = req.body;
+    const userNamee = userName.toLowerCase();
+    console.log("userNamee =", userNamee)
+    const existingUser = await db.user.findOne({ userName: userNamee });
+    console.log("existingUser = " + existingUser)
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .send({ success: false, message: "User username exist" });
+    }
+
+    const user = ({
+      name,
+      userName: userNamee,
+      password,
+    });
+
     const newUser = await db.user(user)
     newUser.save();
     return res.status(201).json({ success: true, newUser });
@@ -31,17 +34,23 @@ const signUp = async (req, res, next) => {
 
 const signIn = async (req, res) => {
   try {
-    const userEmail = req.body.email;
-
-    const email = userEmail.toLowerCase();
+    var userName = req.body.username;
+    userName = userName.toLowerCase();
     const password = req.body.password;
 
-    const user = await db.user.findOne({ email: email });
+    const user = await db.user.findOne({ username: userName });
     if (!user) {
       return res
         .status(404)
-        .send({ success: false, message: "Email not found!" });
+        .send({ success: false, message: "username not found!" });
     }
+    const userPassword = await db.user.findOne({ username: userName, password: password });
+    if (!userPassword) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Password not found!" });
+    }
+
     const userData = {
       user,
     };

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const moment = require("moment");
-const validator = require("validator");
 const crypto = require("crypto");
 const { Schema } = mongoose;
 
@@ -11,19 +10,15 @@ const UserSchema = new Schema({
     minLength: [4, "Name should have then 4 characters"],
     maxLength: [30, "Name cannot extract 30 characters"],
   },
-  username: {
+  userName: {
     type: String,
     required: [true, "Plese Enter Your username"],
-    unique: true,
   },
   password: {
     type: String,
     required: [true, "Plese Enter Your Password"],
     minLength: [4, "password should have then 4 characters"],
     maxLength: [100, "password cannot extract 100 characters"],
-  },
-  avatar: {
-    type: String,
   },
   role: {
     type: String,

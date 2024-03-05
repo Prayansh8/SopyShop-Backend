@@ -41,7 +41,7 @@ const updateUser = async (req, res) => {
 
     const updatedUser = {
       name: req.body.name,
-      email: req.body.email,
+      username: req.body.username,
     };
 
     let user = await db.user.findByIdAndUpdate(userId, updatedUser, {
@@ -120,7 +120,7 @@ const logoutUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 const forwordPassword = catchAsyncErrors(async (req, res, next) => {
-  const findUser = await db.user.findOne({ email: req.body.email });
+  const findUser = await db.user.findOne({ username: req.body.username });
   if (!findUser) {
     return next(res.status(404).send("user not found"));
   }
@@ -134,24 +134,24 @@ const forwordPassword = catchAsyncErrors(async (req, res, next) => {
   //Create reset password url
   const resetUrl = `http://localhost:5000/api/v1/reset/password/${resetToken}`;
 
-  const message = `Your password reset token is as follows:\n\n${resetUrl}\n\n If you have not requested this email, then please ignore.`;
+  const message = `Your password reset token is as follows:\n\n${resetUrl}\n\n If you have not requested this username, then please ignore.`;
 
   try {
     await sendMailler({
-      email: findUser.email,
+      username: findUser.username,
       subject: "Ecommerce Password Recovery",
       message,
     });
     return res.status(200).send({
       success: true,
-      massage: `Email sent to ${findUser.email}} successfully ${resetUrl}`,
+      massage: `username sent to ${findUser.username}} successfully ${resetUrl}`,
     });
   } catch (error) {
     findUser.resetPasswordToken = undefined;
     findUser.resetPasswordExplre = undefined;
 
     await findUser.save({ validateBeforeSave: false });
-    return next(res.status(500).send({ message: "email not send ", error }));
+    return next(res.status(500).send({ message: "username not send ", error }));
   }
 });
 
@@ -220,11 +220,11 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 const updateUserRole = async (req, res, next) => {
-  const email = req.body.email;
+  const username = req.body.username;
   const newRole = req.body.role;
 
   const user = await db.user.findOneAndUpdate(
-    { email: email },
+    { username: username },
     { role: newRole }
   );
   if (!user) {
