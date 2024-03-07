@@ -1,6 +1,7 @@
 const { db } = require("../databases/index");
 const jwt = require("jsonwebtoken");
 const { config } = require("../config");
+const bcrypt = require("bcrypt")
 const signUp = async (req, res, next) => {
   try {
     const { name, userName, password } = req.body;
@@ -34,12 +35,12 @@ const signIn = async (req, res) => {
         .status(404)
         .send({ success: false, message: "username not found!" });
     }
-    const userPassword = await db.user.findOne({ username: userName, password: password });
-    if (!userPassword) {
-      return res
-        .status(404)
-        .send({ success: false, message: "Password not found!" });
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid username or password' });
     }
+
     const userData = {
       user,
     };
