@@ -12,10 +12,12 @@ const signUp = async (req, res, next) => {
         .status(400)
         .send({ success: false, message: "User username exist" });
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = ({
       name,
       userName: userNamee,
-      password,
+      password: hashedPassword,
     });
     const newUser = await db.user(user)
     newUser.save();
