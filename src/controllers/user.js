@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt")
 const signUp = async (req, res, next) => {
   try {
     const { name, userName, password } = req.body;
-    console.log(req.body)
     const userNamee = userName.toLowerCase();
     const existingUser = await db.user.findOne({ userName: userNamee });
     if (existingUser) {
@@ -29,17 +28,16 @@ const signUp = async (req, res, next) => {
 };
 const signIn = async (req, res) => {
   try {
-    var userName = req.body.username;
+    let { userName, password } = req.body;
     userName = userName.toLowerCase();
-    const password = req.body.password;
     const user = await db.user.findOne({ userName: userName });
     if (!user) {
       return res
         .status(404)
         .send({ success: false, message: "username not found!" });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
 
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
