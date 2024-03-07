@@ -91,6 +91,10 @@ userAuthRouter.delete(
   deleteUserByAdmin
 );
 
+app.get('/', (req, res) => {
+  res.send('GET request to the homepage')
+})
+
 const productRouter = express.Router();
 productRouter.post(
   "/product/new",
