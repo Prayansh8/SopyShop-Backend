@@ -239,11 +239,23 @@ const updateUserRole = async (req, res, next) => {
 
 const getUserDetails = async (req, res, next) => {
   try {
-    let userId = req.user.user._id;
+    let userId = req.user.user.id;
     const user = await db.user.findById(userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+    const userData = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      dob: user.dob,
+      updatedAt: user.updatedAt,
+      createdAt: user.createdAt,
+    };
     return res.status(200).json({
       success: true,
-      user: user,
+      user: userData,
       message: "user found success",
     });
   } catch (error) {

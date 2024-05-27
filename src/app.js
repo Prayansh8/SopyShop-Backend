@@ -36,10 +36,6 @@ const {
   deleteOrder,
 } = require("./controllers/order");
 const { processPayment, sendStripeApiKey } = require("./controllers/payment");
-const authRoutes = require("./gts/gtsRoutes/authRoutes");
-const candidateRoutes = require("./gts/gtsRoutes/candidateRoutes");
-const sponsorRoutes = require("./gts/gtsRoutes/sponsorRoutes");
-// middlewere for error
 const cors = require("cors");
 
 const dotenv = require("dotenv");
@@ -160,10 +156,6 @@ app.use("/api/v1", productRouter);
 app.use("/api/v1", orderRouter);
 app.use("/api/v1", paymentRouter);
 
-//  GTS - Chanderi
-app.use("/gts/auth", authRoutes);
-app.use("/gts/candidate", candidateRoutes);
-app.use("/gts/sponsor", sponsorRoutes);
 
 app.listen(config.port, () =>
   console.log(`Example app listening on port ${config.baseUrl}:${config.port}`)

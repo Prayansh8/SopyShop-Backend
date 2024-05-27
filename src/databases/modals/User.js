@@ -4,47 +4,57 @@ const crypto = require("crypto");
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
-  name: {
+  firstName: {
     type: String,
-    required: [true, "Plese Enter Your Name"],
-    minLength: [4, "Name should have then 4 characters"],
-    maxLength: [30, "Name cannot extract 30 characters"],
+    required: [true, "Please enter your first name"],
+    minlength: [2, "First name should have more than 2 characters"],
+    maxlength: [30, "First name cannot exceed 30 characters"],
   },
-  userName: {
+  lastName: {
     type: String,
-    required: [true, "Plese Enter Your username"],
+    required: [true, "Please enter your last name"],
+    minlength: [2, "Last name should have more than 2 characters"],
+    maxlength: [30, "Last name cannot exceed 30 characters"],
+  },
+  email: {
+    type: String,
+    required: [true, "Please enter your email"],
+    unique: true,
+    match: [/\S+@\S+\.\S+/, "Please enter a valid email address"],
+  },
+  phone: {
+    type: String,
+    required: [true, "Please enter your phone number"],
+    unique: true,
+    match: [/^\d{10}$/, "Please enter a valid phone number"],
+  },
+  dob: {
+    type: Date,
+    required: [true, "Please enter your date of birth"],
   },
   password: {
     type: String,
-    required: [true, "Plese Enter Your Password"],
-    minLength: [4, "password should have then 4 characters"],
-    maxLength: [100, "password cannot extract 100 characters"],
+    required: [true, "Please enter your password"],
+    minlength: [4, "Password should have more than 4 characters"],
+    maxlength: [100, "Password cannot exceed 100 characters"],
   },
   role: {
     type: String,
     default: "user",
   },
-  resetPasswordToken: { type: String },
-  resetPasswordExplre: { type: Date },
-  createdAt: { type: Date, default: moment.utc().toISOString() },
-  updatedAt: { type: Date, default: moment.utc().toISOString() },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
+}, {
+  timestamps: true,
 });
 
-// genrating password forward method
-
 UserSchema.methods.getResetPasswordToken = function () {
-  //Generate token
   const resetToken = crypto.randomBytes(20).toString("hex");
-
-  //Hash and set to resetPasswordToken
   this.resetPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-
-  //Set token expire time
   this.resetpasswordExpire = Date.now() + 30 * 60 * 1000;
-
   return resetToken;
 };
 
