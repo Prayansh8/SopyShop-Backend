@@ -156,10 +156,6 @@ app.use("/api/v1", productRouter);
 app.use("/api/v1", orderRouter);
 app.use("/api/v1", paymentRouter);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> bd900e55b817b1c5bbc0c12d4b2c8d425c5217da
 app.listen(config.port, () =>
   console.log(`Example app listening on port ${config.baseUrl}:${config.port}`)
 );
