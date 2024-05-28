@@ -31,8 +31,6 @@ const UserSchema = new Schema({
   dob: {
     type: Date,
     required: [true, "Please enter your date of birth"],
-    get: (v) => v.toISOString().split('T')[0],
-    set: (v) => new Date(v.toISOString().split('T')[0])
   },
   password: {
     type: String,

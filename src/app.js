@@ -150,6 +150,10 @@ orderRouter.delete(
   deleteOrder
 );
 
+app.get('/', (req, res) => {
+  res.send('GET request to the homepage')
+})
+
 app.use("/api/v1", userRouter);
 app.use("/api/v1", userAuthRouter);
 app.use("/api/v1", productRouter);

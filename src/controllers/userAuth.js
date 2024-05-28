@@ -250,6 +250,7 @@ const getUserDetails = async (req, res, next) => {
       email: user.email,
       phone: user.phone,
       dob: user.dob,
+      role: user.role,
       updatedAt: user.updatedAt,
       createdAt: user.createdAt,
     };
