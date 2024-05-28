@@ -29,18 +29,10 @@ const UserSchema = new Schema({
     match: [/^\d{10}$/, "Please enter a valid phone number"],
   },
   dob: {
-    type: String,
-    required: true,
-    set: function (value) {
-      if (!/^\d{2}-\d{2}-\d{4}$/.test(value)) {
-        throw new Error('Date must be in the format DD-MM-YYYY');
-      }
-      return value;
-    },
-    get: function (value) {
-      return formatDateString(value);
-    },
+    type: Date,
     required: [true, "Please enter your date of birth"],
+    get: (v) => v.toISOString().split('T')[0],
+    set: (v) => new Date(v.toISOString().split('T')[0])
   },
   password: {
     type: String,
